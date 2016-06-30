@@ -51,15 +51,15 @@ install_requirements = ['boto3>=1.3.0',
 # setup
 
 setup(
-    name='loafer',
+    name="olist-loafer",
     version=__version__,  # NOQA
     description='Asynchronous message dispatcher for concurrent tasks processing',
     long_description=long_description,
-    url='https://github.com/georgeyk/loafer/',
-    download_url='https://github.com/georgeyk/loafer/releases',
+    url='https://github.com/solidarium/loafer/',
+    download_url='https://github.com/solidarium/loafer/releases',
     license='MIT',
-    author='George Y. Kussumoto',
-    author_email='contato at georgeyk dot com dot br',
+    author='George Y. Kussumoto and Olist Developers',
+    author_email='contato at georgeyk dot com dot br and developers@olist.com',
     packages=find_packages(exclude=['docs', 'tests', 'tests.*', 'requirements']),
     classifiers=[
         'Development Status :: 4 - Beta',
