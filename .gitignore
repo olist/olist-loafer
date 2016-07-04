@@ -65,3 +65,7 @@ target/
 # environment
 .env
 .venv
+
+# vim/linux
+*.*~
+*.sw[omnp]

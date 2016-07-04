@@ -1,4 +1,5 @@
 0.0.4 (2016-06-27)
+------------------
 
 * Got rid of CLI. It runs by parameters, now
 * Got rid of prettyconf dependency
