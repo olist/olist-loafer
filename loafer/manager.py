@@ -48,7 +48,7 @@ class LoaferManager(object):
 
         self._dispatcher = self.get_dispatcher()
 
-        self._future = asyncio.gather(self._dispatcher.dispatch_consumers())
+        self._future = asyncio.gather(self._dispatcher.dispatch_consumers(), loop=self._loop)
         self._future.add_done_callback(self.on_future__errors)
 
         try:

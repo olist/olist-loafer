@@ -1,3 +1,9 @@
+0.1.0 (2016-08-17)
+------------------
+
+* Changed version numbering to match other projects
+* Fixed a bug with LoaferManager start. Sometimes when starting the event loop would already be closed.
+
 0.0.4 (2016-06-27)
 ------------------
 

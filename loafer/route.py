@@ -18,7 +18,7 @@ class Route(object):
         else:
             self.message_translator = message_translator
 
-    def __str__(self):
+    def __repr__(self):
         return '<Route(name={} queue={} message_handler={})>'.format(
             self.name, self.source, self.message_handler)
 
