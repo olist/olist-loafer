@@ -1,3 +1,14 @@
+0.2.1 (2016-08-22)
+------------------
+
+* Update Makefile
+
+0.2.0 (2016-08-22)
+------------------
+
+* Update AWS Consumer
+* Make SNSMessageTranslator default message_translator
+
 0.1.0 (2016-08-17)
 ------------------
 
