@@ -1,7 +1,7 @@
 import asyncio
 import logging
 
-from .aws.message_translator import SQSMessageTranslator
+from .aws.message_translator import SNSMessageTranslator
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +14,7 @@ class Route(object):
         self.message_handler_name = type(message_handler).__name__
 
         if message_translator is None:
-            self.message_translator = SQSMessageTranslator()
+            self.message_translator = SNSMessageTranslator()
         else:
             self.message_translator = message_translator
 
