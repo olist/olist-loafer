@@ -33,7 +33,7 @@ class LoaferManager(object):
         self.routes = []
 
         if consumers is None:
-            self.consumers = [AWSConsumer(source, {'WaitTimeSeconds': 5, 'MaxNumberOfMessages': 5}, loop=self._loop)]
+            self.consumers = [AWSConsumer(source, options={'WaitTimeSeconds': 5, 'MaxNumberOfMessages': 5}, loop=self._loop)]
         else:
             self.consumers = consumers
 
