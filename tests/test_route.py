@@ -6,7 +6,7 @@ from unittest import mock
 
 import pytest
 
-from loafer.aws.message_translator import SQSMessageTranslator
+from loafer.aws.message_translator import SNSMessageTranslator
 from loafer.route import Route
 from loafer.example.jobs import example_job, async_example_job
 
@@ -37,7 +37,7 @@ def test_message_translator():
 def test_default_message_translator():
     route = Route('foo', example_job)
     translator = route.message_translator
-    assert isinstance(translator, SQSMessageTranslator)
+    assert isinstance(translator, SNSMessageTranslator)
 
 
 # FIXME: Improve all test_deliver* tests
