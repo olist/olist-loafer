@@ -1,3 +1,8 @@
+0.2.3 (2016-10-06)
+------------------
+
+* Allow to configure max_jobs on Dispacher through Manager
+
 0.2.2 (2016-08-29)
 ------------------
 
