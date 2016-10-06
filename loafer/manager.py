@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 class LoaferManager(object):
 
-    def __init__(self, source, thread_pool_size=None, event_loop=None, consumers=None):
+    def __init__(self, source, thread_pool_size=None, event_loop=None, consumers=None, max_jobs=10):
 
         self._loop = event_loop or asyncio.get_event_loop()
         self._loop.add_signal_handler(signal.SIGINT, self.stop)
@@ -29,6 +29,7 @@ class LoaferManager(object):
         self.thread_pool_size = thread_pool_size
         self._executor = ThreadPoolExecutor(self.thread_pool_size)
         self._loop.set_default_executor(self._executor)
+        self.max_jobs = max_jobs
 
         self.routes = []
 
@@ -40,7 +41,7 @@ class LoaferManager(object):
         self._dispatcher = None
 
     def get_dispatcher(self):
-        return LoaferDispatcher(self.routes, self.consumers)
+        return LoaferDispatcher(self.routes, self.consumers, max_jobs=self.max_jobs)
 
     def start(self):
         start_message = 'Starting Loafer - Version: {} (pid={}) ...'
