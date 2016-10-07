@@ -41,7 +41,7 @@ class LoaferManager(object):
         self._dispatcher = None
 
     def get_dispatcher(self):
-        return LoaferDispatcher(self.routes, self.consumers, max_jobs=self.max_jobs)
+        return LoaferDispatcher(self.routes, self.consumers, loop=self._loop, max_jobs=self.max_jobs)
 
     def start(self):
         start_message = 'Starting Loafer - Version: {} (pid={}) ...'

@@ -10,9 +10,10 @@ logger = logging.getLogger(__name__)
 
 
 class LoaferDispatcher(object):
-    def __init__(self, routes, consumers, max_jobs=10):
+    def __init__(self, routes, consumers, loop, max_jobs=10):
         self.routes = routes
         self.consumers = consumers or []
+        self._loop = loop
         self._semaphore = asyncio.Semaphore(max_jobs)
         self._stop_consumers = True
 
@@ -64,6 +65,14 @@ class LoaferDispatcher(object):
 
         return True
 
+    async def consume_route(self, route):
+        consumer = self.get_consumer(route)
+        messages = await consumer.consume()
+        for message in messages:
+            confirmation = await self.dispatch_message(message, route)
+            if confirmation:
+                await consumer.confirm_message(message)
+
     async def dispatch_consumers(self, sentinel=None):
         if sentinel is None or not callable(sentinel):
             self._stop_consumers = False
@@ -72,13 +81,8 @@ class LoaferDispatcher(object):
             stopper = sentinel
 
         while not stopper():
-            for route in self.routes:
-                consumer = self.get_consumer(route)
-                messages = await consumer.consume()
-                for message in messages:
-                    confirmation = await self.dispatch_message(message, route)
-                    if confirmation:
-                        await consumer.confirm_message(message)
+            tasks = (self._loop.create_task(self.consume_route(route)) for route in self.routes)
+            await asyncio.gather(*tasks)
 
     def _default_sentinel(self):
         return self._stop_consumers
