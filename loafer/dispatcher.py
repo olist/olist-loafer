@@ -81,8 +81,8 @@ class LoaferDispatcher(object):
             stopper = sentinel
 
         while not stopper():
-            tasks = (self._loop.create_task(self.consume_route(route)) for route in self.routes)
-            await asyncio.gather(*tasks)
+            tasks = [self._loop.create_task(self.consume_route(route)) for route in self.routes]
+            await asyncio.wait(tasks, loop=self._loop)
 
     def _default_sentinel(self):
         return self._stop_consumers
