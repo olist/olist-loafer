@@ -40,6 +40,12 @@ def test_default_message_translator():
     assert isinstance(translator, SNSMessageTranslator)
 
 
+def test_default_error_handler():
+    route = Route('foo', example_job)
+    assert callable(route.error_handler)
+    assert route.error_handler('message', mock.Mock()) is False
+
+
 # FIXME: Improve all test_deliver* tests
 
 @pytest.mark.asyncio
