@@ -4,7 +4,7 @@ import asyncio
 from unittest.mock import Mock
 
 from asynctest import CoroutineMock
-from asynctest import Mock as AsyncMock  # flake8: NOQA
+#from asynctest import Mock as AsyncMock  # flake8: NOQA
 import pytest
 
 from loafer.exceptions import RejectMessage, IgnoreMessage
@@ -13,7 +13,7 @@ from loafer.dispatcher import LoaferDispatcher
 
 def test_without_consumers(route, event_loop):
     with pytest.raises(TypeError):
-        dispatcher = LoaferDispatcher([route], loop=event_loop)
+        LoaferDispatcher([route], loop=event_loop)
 
 
 def test_with_consumers(route, event_loop):
@@ -121,6 +121,7 @@ async def test_dispatch_message_task_ignore_message(route, event_loop):
 @pytest.mark.asyncio
 async def test_dispatch_message_task_error(route, event_loop):
     route.deliver = CoroutineMock(side_effect=Exception)
+    route.error_handler = Mock(return_value=False)
     dispatcher = LoaferDispatcher([route], [Mock()], loop=event_loop)
 
     message = 'message'
@@ -130,6 +131,25 @@ async def test_dispatch_message_task_error(route, event_loop):
     assert route.message_translator.translate.called
     assert route.deliver.called
     assert route.deliver.called_once_with(message)
+    assert route.error_handler.called
+    assert route.error_handler.called_once_with(Exception())
+
+
+@pytest.mark.asyncio
+async def test_dispatch_message_task_error_with_confirmation(route, event_loop):
+    route.deliver = CoroutineMock(side_effect=Exception)
+    route.error_handler = Mock(return_value=True)
+    dispatcher = LoaferDispatcher([route], [Mock()], loop=event_loop)
+
+    message = 'message'
+    confirmation = await dispatcher.dispatch_message(message, route)
+    assert confirmation is True
+
+    assert route.message_translator.translate.called
+    assert route.deliver.called
+    assert route.deliver.called_once_with(message)
+    assert route.error_handler.called
+    assert route.error_handler.called_once_with(Exception())
 
 
 @pytest.mark.asyncio
