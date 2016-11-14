@@ -59,9 +59,7 @@ class LoaferDispatcher(object):
                 logger.warning(msg.format(route.message_handler, message))
                 return False
             except Exception as exc:
-                logger.exception(exc)
-                logger.error('Unhandled exception on {}'.format(route.message_handler))
-                return False
+                return route.error_handler(content, exc)
 
         return True
 

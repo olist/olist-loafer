@@ -32,3 +32,13 @@ class Route(object):
             logger.debug('Handler will run in a separate thread: {!r}'.format(self.message_handler_name))
             loop = loop or asyncio.get_event_loop()
             return await loop.run_in_executor(None, self.message_handler, content)
+
+    def error_handler(self, message, exception):
+        """Hook for unhandled exceptions raised from `message_handler` for a given
+        message.
+        If the returning value is True, the message will be acknowledged.
+        By the default we return `False`.
+        """
+        logger.exception(exception)
+        logger.error('Unhandled exception on {}'.format(self.message_handler))
+        return False
