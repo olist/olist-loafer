@@ -4,7 +4,6 @@ import asyncio
 from unittest.mock import Mock
 
 from asynctest import CoroutineMock
-#from asynctest import Mock as AsyncMock  # flake8: NOQA
 import pytest
 
 from loafer.exceptions import RejectMessage, IgnoreMessage
@@ -165,6 +164,7 @@ async def test_dispatch_message_task_cancel(route, event_loop):
     assert route.deliver.called
     assert route.deliver.called_once_with(message)
 
+
 def test_dispatch_consumers(route, consumer, event_loop):
     routes = [route]
     dispatcher = LoaferDispatcher(routes, [Mock()], loop=event_loop)
@@ -176,7 +176,6 @@ def test_dispatch_consumers(route, consumer, event_loop):
 
     def stopper():
         return running_values.pop(0)
-
 
     event_loop.run_until_complete(dispatcher.dispatch_consumers(stopper))
 
