@@ -1,3 +1,8 @@
+0.3.2 (2016-11-14)
+------------------
+
+* Add Route.error_handler method and hook it in message dispatcher
+
 0.3.1 (2016-10-10)
 ------------------
 
