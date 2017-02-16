@@ -1,3 +1,8 @@
+0.3.3 (2017-02-16)
+------------------
+
+* Add a logger.exception to message dispatcher before calling Route.error_handler
+
 0.3.2 (2016-11-14)
 ------------------
 
