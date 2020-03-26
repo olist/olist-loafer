@@ -1,7 +1,8 @@
 -r test.txt
 Sphinx
 sphinx-autobuild
-twine
+aiobotocore
+cached-property
 wheel
 sphinx-rtd-theme
 seqdiag
