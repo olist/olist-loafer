@@ -9,7 +9,7 @@ from setuptools import Command, find_packages, setup
 here = os.path.abspath(os.path.dirname(__file__))
 version = "0.0.0"
 changes = os.path.join(here, "CHANGES.rst")
-pattern = r'^(?P<version>[0-9]+.[0-9]+(.[0-9]+)?)'
+pattern = r'^(?P<version>[0-9]+.[0-9]+(.[0-9]+)?(\+[a-z0-9]+)?)'
 with codecs.open(changes, encoding='utf-8') as changes:
     for line in changes:
         match = re.match(pattern, line)
