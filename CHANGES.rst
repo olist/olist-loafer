@@ -1,3 +1,10 @@
+1.3.2+post1 (2019-04-27)
+------------------
+
+* Update dependencies
+* Update makefile for olist build
+
+
 1.3.2 (2019-04-27)
 ------------------
 

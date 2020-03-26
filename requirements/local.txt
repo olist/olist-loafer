@@ -1,7 +1,7 @@
 -r test.txt
+aiobotocore
 Sphinx
 sphinx-autobuild
-aiobotocore
 cached-property
 wheel
 sphinx-rtd-theme
