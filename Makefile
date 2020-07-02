@@ -34,16 +34,13 @@ dist: clean
 	python setup.py sdist
 	python setup.py bdist_wheel
 
-/usr/local/bin/package_cloud:
-	sudo gem install package_cloud
+twine:
+	pip install twine
 
-package_cloud: /usr/local/bin/package_cloud
-
-release: package_cloud clean dist
+release: twine clean dist
 	git tag `python setup.py -q version`
 	git push origin `python setup.py -q version`
-	package_cloud push olist/v2/python dist/*.whl
-	package_cloud push olist/v2/python dist/*.tar.gz
+	twine upload dist/*.whl dist/*.tar.gz
 
 changelog-preview:
 	@echo "\nmaster ("$$(date '+%Y-%m-%d')")"
