@@ -64,15 +64,15 @@ install_requirements = [
 # setup
 
 setup(
-    name='loafer',
+    name='olist-loafer',
     version=version,
     description='Asynchronous message dispatcher for concurrent tasks processing',
     long_description=long_description,
-    url='https://github.com/georgeyk/loafer/',
-    download_url='https://github.com/georgeyk/loafer/releases',
+    url='https://github.com/olist/olist-loafer/',
+    download_url='https://github.com/olist/olist-loafer/releases',
     license='MIT',
-    author='George Y. Kussumoto',
-    author_email='contato@georgeyk.com.br',
+    author='Olist',
+    author_email='developers@olist.com',
     packages=find_packages(exclude=['docs', 'tests', 'tests.*', 'requirements']),
     classifiers=[
         'Development Status :: 4 - Beta',
