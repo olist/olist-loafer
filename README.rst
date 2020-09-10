@@ -1,3 +1,5 @@
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Folist%2Folist-loafer.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Folist%2Folist-loafer?ref=badge_shield)
+
 Loafer
 ======
 
@@ -81,3 +83,7 @@ Check out the latest **Loafer** full documentation at `Read the Docs`_ website.
    :target: https://pypi.python.org/pypi/loafer
 .. |Olist Sponsor| image:: https://img.shields.io/badge/sponsor-olist-53b5f6.svg?style=flat-square
    :target: http://opensource.olist.com/
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Folist%2Folist-loafer.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Folist%2Folist-loafer?ref=badge_large)
