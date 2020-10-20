@@ -21,7 +21,7 @@ class LoaferDispatcher:
             logger.warning('message will be ignored:\n{!r}\n'.format(message))
             return confirm_message
 
-        with await self._semaphore:
+        async with self._semaphore:
             try:
                 confirm_message = await route.deliver(message)
             except DeleteMessage:
