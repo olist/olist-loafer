@@ -25,8 +25,7 @@ Features:
 * Amazon SQS integration
 
 
-It requires Python 3.5+ and is very experimental at the moment, expect a lot
-of changes until the first major version.
+It requires Python 3.7+
 
 
 Example

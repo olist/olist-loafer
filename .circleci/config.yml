@@ -1,9 +1,9 @@
 version: 2
 jobs:
-  build_py35: &test-template
+  build_py37: &test-template
     working_directory: ~/repo
     docker:
-      - image: circleci/python:3.5.7-stretch
+      - image: circleci/python:3.7.9-stretch
     environment:
       PRE_COMMIT_SKIP=no-commit-to-branch,check-mutable-defaults
 
@@ -44,17 +44,17 @@ jobs:
             . venv/bin/activate
             make check-fixtures
 
-  build_py36:
+  build_py38:
     <<: *test-template
     docker:
-      - image: circleci/python:3.6.8-stretch
+      - image: circleci/python:3.8.6-buster
     environment:
       PRE_COMMIT_SKIP=no-commit-to-branch
 
-  build_py37:
+  build_py39:
     <<: *test-template
     docker:
-      - image: circleci/python:3.7.3-stretch
+      - image: circleci/python:3.9.0-buster
     environment:
       PRE_COMMIT_SKIP=no-commit-to-branch
 
@@ -63,9 +63,9 @@ workflows:
   version: 2
   commit:
     jobs:
-      - build_py35
-      - build_py36
       - build_py37
+      - build_py38
+      - build_py39
 
   scheduled:
     triggers:
@@ -76,5 +76,6 @@ workflows:
               only: master
 
     jobs:
-      - build_py35
-      - build_py36
+      - build_py37
+      - build_py38
+      - build_py39
