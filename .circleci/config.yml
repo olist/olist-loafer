@@ -47,14 +47,14 @@ jobs:
   build_py38:
     <<: *test-template
     docker:
-      - image: circleci/python:3.8.6-stretch
+      - image: circleci/python:3.8.6-buster
     environment:
       PRE_COMMIT_SKIP=no-commit-to-branch
 
   build_py39:
     <<: *test-template
     docker:
-      - image: circleci/python:3.9.0-stretch
+      - image: circleci/python:3.9.0-buster
     environment:
       PRE_COMMIT_SKIP=no-commit-to-branch
 
