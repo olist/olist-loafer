@@ -4,7 +4,7 @@ import pytest
 from asynctest import CoroutineMock
 from botocore.exceptions import BotoCoreError, ClientError
 
-from loafer.exceptions import ProviderError, SQSProviderRuntimeError
+from loafer.exceptions import ProviderError, ProviderRuntimeError
 from loafer.ext.aws.providers import SQSProvider
 
 
@@ -115,5 +115,5 @@ def test_reraise_runtime_error_as_sqs_provider_runtime_error(mock_boto_session_s
         provider = SQSProvider('queue-name')
         boto_client_sqs.close.side_effect = RuntimeError()
 
-        with pytest.raises(SQSProviderRuntimeError):
+        with pytest.raises(ProviderRuntimeError):
             provider.stop()
