@@ -108,6 +108,7 @@ def test_stop():
     provider.stop()
     provider._client_stop.assert_awaited()
 
+
 @pytest.mark.asyncio
 def test_reraise_runtime_error_as_sqs_provider_runtime_error(mock_boto_session_sqs, boto_client_sqs):
     with mock_boto_session_sqs:
