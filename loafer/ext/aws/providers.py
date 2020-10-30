@@ -6,6 +6,7 @@ import botocore.exceptions
 from .bases import BaseSQSClient
 from loafer.exceptions import ProviderError, ProviderRuntimeError
 from loafer.providers import AbstractProvider
+from loafer.utils import calculate_backoff_multiplier
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +16,7 @@ class SQSProvider(AbstractProvider, BaseSQSClient):
     def __init__(self, queue_name, options=None, **kwargs):
         self.queue_name = queue_name
         self._options = options or {}
+        self._backoff_factor = self._options.pop("BackoffFactor", None)
         super().__init__(**kwargs)
 
     def __str__(self):
@@ -33,6 +35,18 @@ class SQSProvider(AbstractProvider, BaseSQSClient):
                 return True
 
             raise
+
+    async def message_not_processed(self, message):
+        receipt = message['ReceiptHandle']
+        if self._backoff_factor:
+            backoff_multiplier = calculate_backoff_multiplier(int(message['Attributes']['ApproximateReceiveCount']), self._backoff_factor)
+
+            custom_visibility_timeout = round(backoff_multiplier * self._options.get("VisibilityTimeout", 30))
+            logger.info(f'message not processed, receipt={receipt!r}, '
+                        f'custom_visibility_timeout={custom_visibility_timeout!r}')
+            queue_url = await self.get_queue_url(self.queue_name)
+            async with self.get_client() as client:
+                return await client.change_message_visibility(QueueUrl=queue_url, ReceiptHandle=receipt, VisibilityTimeout=custom_visibility_timeout)
 
     async def fetch_messages(self):
         logger.debug('fetching messages on {}'.format(self.queue_name))
