@@ -1,3 +1,8 @@
+3.0.1 (2020-10-29)
+------------------
+
+* Reraise RuntimeError as ProviderRuntimeError
+
 3.0.0 (2020-10-20)
 ------------------
 

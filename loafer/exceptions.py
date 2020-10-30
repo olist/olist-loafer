@@ -3,6 +3,10 @@ class ProviderError(Exception):
     pass
 
 
+class ProviderRuntimeError(ProviderError):
+    pass
+
+
 class ConfigurationError(Exception):
     pass
 

@@ -4,7 +4,7 @@ import logging
 import botocore.exceptions
 
 from .bases import BaseSQSClient
-from loafer.exceptions import ProviderError
+from loafer.exceptions import ProviderError, ProviderRuntimeError
 from loafer.providers import AbstractProvider
 
 logger = logging.getLogger(__name__)
@@ -47,7 +47,10 @@ class SQSProvider(AbstractProvider, BaseSQSClient):
 
     async def _client_stop(self):
         async with self.get_client() as client:
-            await client.close()
+            try:
+                await client.close()
+            except RuntimeError as exc:
+                raise ProviderRuntimeError() from exc
 
     def stop(self):
         logger.info('stopping {}'.format(self))
