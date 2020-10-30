@@ -55,3 +55,9 @@ async def run_in_loop_or_executor(func, *args):
     loop = asyncio.get_event_loop()
     logger.debug('handler will run in a separate thread: {!r}'.format(func))
     return await loop.run_in_executor(None, func, *args)
+
+
+def calculate_backoff_multiplier(number_of_tries, backoff_factor):
+    exponential_factor = backoff_factor ** number_of_tries
+
+    return exponential_factor

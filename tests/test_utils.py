@@ -4,7 +4,7 @@ import sys
 
 import pytest
 
-from loafer.utils import add_current_dir_to_syspath, import_callable
+from loafer.utils import add_current_dir_to_syspath, calculate_backoff_multiplier, import_callable
 
 
 def test_import_function():
@@ -77,3 +77,15 @@ def test_current_dir_not_in_syspath():
     assert current not in sys.path
 
     os.chdir(old_current)
+
+
+@pytest.mark.parametrize("number_of_tries, backoff_factor, expected", [
+    (0, 1.5, 1),
+    (1, 1.5, 1.5),
+    (2, 1.5, 2.25),
+    (3, 1.5, 3.375),
+    (4, 1.5, 5.0625),
+    (5, 1.5, 7.59375),
+])
+def test_calculate_backoff_multiplier(number_of_tries, backoff_factor, expected):
+    assert calculate_backoff_multiplier(number_of_tries, backoff_factor) == expected
