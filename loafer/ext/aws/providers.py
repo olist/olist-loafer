@@ -49,8 +49,8 @@ class SQSProvider(AbstractProvider, BaseSQSClient):
         async with self.get_client() as client:
             try:
                 await client.close()
-            except RuntimeError:
-                raise ProviderRuntimeError()
+            except RuntimeError as exc:
+                raise ProviderRuntimeError() from exc
 
     def stop(self):
         logger.info('stopping {}'.format(self))
