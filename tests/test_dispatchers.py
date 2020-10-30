@@ -13,7 +13,7 @@ from loafer.routes import Route
 @pytest.fixture
 def provider():
     return CoroutineMock(fetch_messages=CoroutineMock(return_value=['message']),
-                         confirm_message=CoroutineMock())
+                         confirm_message=CoroutineMock(), message_not_processed=CoroutineMock())
 
 
 @pytest.fixture
@@ -100,7 +100,22 @@ async def test_message_processing(route):
     assert dispatcher.dispatch_message.called
     dispatcher.dispatch_message.assert_called_once_with('message', route)
     assert route.provider.confirm_message.called
+    assert route.provider.message_not_processed.called is False
     route.provider.confirm_message.assert_called_once_with('message')
+
+
+@pytest.mark.asyncio
+async def test_message_processing_unsuccessfully(route):
+    dispatcher = LoaferDispatcher([route])
+    dispatcher.dispatch_message = CoroutineMock(return_value=False)
+    await dispatcher._process_message('message', route)
+
+    assert dispatcher.dispatch_message.called
+    dispatcher.dispatch_message.assert_called_once_with('message', route)
+
+    assert route.provider.message_not_processed.called
+    assert route.provider.confirm_message.called is False
+    route.provider.message_not_processed.assert_called_once_with('message')
 
 
 @pytest.mark.asyncio
@@ -111,6 +126,7 @@ async def test_dispatch_tasks(route):
 
     assert route.provider.fetch_messages.called
     assert route.provider.confirm_message.called
+    assert route.provider.message_not_processed.called is False
 
 
 @pytest.mark.asyncio
@@ -121,6 +137,7 @@ async def test_dispatch_without_tasks(route, event_loop):
 
     assert route.provider.fetch_messages.called
     assert route.provider.confirm_message.called is False
+    assert route.provider.message_not_processed.called is False
 
 
 @pytest.mark.asyncio
