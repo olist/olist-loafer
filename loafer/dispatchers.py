@@ -39,9 +39,11 @@ class LoaferDispatcher:
 
     async def _process_message(self, message, route):
         confirmation = await self.dispatch_message(message, route)
+        provider = route.provider
         if confirmation:
-            provider = route.provider
             await provider.confirm_message(message)
+        else:
+            await provider.message_not_processed(message)
         return confirmation
 
     async def _get_route_messages(self, route):

@@ -16,6 +16,10 @@ class AbstractProvider(abc.ABC):
         This usually means we need to delete the message in the provider.
         '''
 
+    async def message_not_processed(self, message):
+        '''If needed, a coroutine to perform actions when a message was not processed.
+        '''
+
     def stop(self):
         '''Stops the provider.
         If needed, the provider should perform clean-up actions.
