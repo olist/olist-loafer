@@ -26,6 +26,8 @@ SQSProvider
     * ``use_ssl``
     * ``verify``
 
+To use exponencial backoff factor options must contain :code:`'AttributeNames': ['ApproximateReceiveCount'], 'BackoffFactor': 1.5` and optionally :code:`'VisibilityTimeout': 30` (30 is used as default)
+
 Check `boto3 client`_ documentation for detailed information.
 
 Usually, the provider are not configured manually, but set by :doc:`routes` and
