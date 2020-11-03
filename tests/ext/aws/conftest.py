@@ -54,6 +54,7 @@ def boto_client_sqs(queue_url, sqs_message):
     mock_client.delete_message = CoroutineMock()
     mock_client.receive_message = CoroutineMock(return_value=sqs_message)
     mock_client.send_message = CoroutineMock(return_value=sqs_send_message)
+    mock_client.change_message_visibility = CoroutineMock()
     mock_client.close = CoroutineMock()
     return mock_client
 
