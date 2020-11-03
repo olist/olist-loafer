@@ -39,14 +39,23 @@ class SQSProvider(AbstractProvider, BaseSQSClient):
     async def message_not_processed(self, message):
         receipt = message['ReceiptHandle']
         if self._backoff_factor:
-            backoff_multiplier = calculate_backoff_multiplier(int(message['Attributes']['ApproximateReceiveCount']), self._backoff_factor)
+            backoff_multiplier = calculate_backoff_multiplier(
+                int(message['Attributes']['ApproximateReceiveCount']),
+                self._backoff_factor,
+            )
 
-            custom_visibility_timeout = round(backoff_multiplier * self._options.get("VisibilityTimeout", 30))
-            logger.info(f'message not processed, receipt={receipt!r}, '
-                        f'custom_visibility_timeout={custom_visibility_timeout!r}')
+            custom_visibility_timeout = round(backoff_multiplier * self._options.get('VisibilityTimeout', 30))
+            logger.info(
+                f'message not processed, receipt={receipt!r}, '
+                f'custom_visibility_timeout={custom_visibility_timeout!r}'
+            )
             queue_url = await self.get_queue_url(self.queue_name)
             async with self.get_client() as client:
-                return await client.change_message_visibility(QueueUrl=queue_url, ReceiptHandle=receipt, VisibilityTimeout=custom_visibility_timeout)
+                return await client.change_message_visibility(
+                    QueueUrl=queue_url,
+                    ReceiptHandle=receipt,
+                    VisibilityTimeout=custom_visibility_timeout,
+                )
 
     async def fetch_messages(self):
         logger.debug('fetching messages on {}'.format(self.queue_name))
