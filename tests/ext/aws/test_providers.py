@@ -117,6 +117,8 @@ def test_reraise_runtime_error_as_sqs_provider_runtime_error(mock_boto_session_s
 
         with pytest.raises(ProviderRuntimeError):
             provider.stop()
+
+
 async def test_custom_visibility_timeout(mock_boto_session_sqs, boto_client_sqs):
     options = {'WaitTimeSeconds': 5, 'MaxNumberOfMessages': 10, 'VisibilityTimeout': 60}
     with mock_boto_session_sqs:
