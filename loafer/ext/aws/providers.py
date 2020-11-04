@@ -47,13 +47,13 @@ class SQSProvider(AbstractProvider, BaseSQSClient):
 
     async def _client_stop(self):
         async with self.get_client() as client:
-            try:
-                await client.close()
-            except RuntimeError as exc:
-                raise ProviderRuntimeError() from exc
+            await client.close()
 
     def stop(self):
         logger.info('stopping {}'.format(self))
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._client_stop())
+        try:
+            loop.run_until_complete(self._client_stop())
+        except RuntimeError as exc:
+            raise ProviderRuntimeError() from exc
         return super().stop()
