@@ -119,6 +119,7 @@ def test_reraise_runtime_error_as_sqs_provider_runtime_error(mock_boto_session_s
             provider.stop()
 
 
+@pytest.mark.asyncio
 async def test_custom_visibility_timeout(mock_boto_session_sqs, boto_client_sqs):
     options = {'WaitTimeSeconds': 5, 'MaxNumberOfMessages': 10, 'VisibilityTimeout': 60}
     with mock_boto_session_sqs:
@@ -144,7 +145,29 @@ async def test_backoff_factor_options(mock_boto_session_sqs, boto_client_sqs):
         assert provider._backoff_factor == 1.5
 
         await provider.fetch_messages()
-        assert 'BackoffFactor' not in boto_client_sqs.receive_message.call_args.kwargs
+
+        _, receive_message_kwargs = boto_client_sqs.receive_message.call_args
+
+        assert 'BackoffFactor' not in receive_message_kwargs
+        assert 'AttributeNames' in receive_message_kwargs
+        assert 'ApproximateReceiveCount' in receive_message_kwargs['AttributeNames']
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('options, expected', [
+    ({}, ['ApproximateReceiveCount']),
+    ({'AttributeNames': []}, ['ApproximateReceiveCount']),
+    ({'AttributeNames': ['CreatedTimestamp']}, ['ApproximateReceiveCount', 'CreatedTimestamp']),
+    ({'AttributeNames': ['All']}, ['All']),
+])
+async def test_backoff_factor_options_with_attributes_names(mock_boto_session_sqs, boto_client_sqs, options, expected):
+    with mock_boto_session_sqs:
+        provider = SQSProvider('queue-name', options={'BackoffFactor': 1.5, **options})
+        await provider.fetch_messages()
+
+    _, receive_message_kwargs = boto_client_sqs.receive_message.call_args
+    assert set(receive_message_kwargs['AttributeNames']) == set(expected)
+    assert len(receive_message_kwargs['AttributeNames']) == len(expected)
 
 
 @pytest.mark.asyncio
