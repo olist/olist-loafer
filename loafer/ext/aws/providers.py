@@ -17,7 +17,7 @@ class SQSProvider(AbstractProvider, BaseSQSClient):
         self.queue_name = queue_name
         self._options = options or {}
         self._backoff_factor = self._options.pop('BackoffFactor', None)
-        if self._backoff_factor:
+        if self._backoff_factor is not None:
             attributes_names = self._options.get('AttributeNames', [])
             if 'ApproximateReceiveCount' not in attributes_names and 'All' not in attributes_names:
                 attributes_names.append('ApproximateReceiveCount')
