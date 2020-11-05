@@ -1,5 +1,6 @@
 import asyncio
 from unittest import mock
+from contextlib import nullcontext as does_not_raise
 
 import pytest
 
@@ -85,3 +86,13 @@ def test_runner_stop_dont_raise_cancelled_error():
     assert task.cancelled() is True
     with pytest.raises(asyncio.CancelledError):
         task.exception()
+
+
+@mock.patch("loafer.runners.LoaferRunner._cancel_all_tasks")
+def test_runner_stop_dont_raise_runtime_error(cancel_all_tasks_mock):
+    cancel_all_tasks_mock.side_effect = RuntimeError("faiô!")
+    runner = LoaferRunner()
+
+    with does_not_raise():
+        runner.loop.stop()
+        runner.stop()
