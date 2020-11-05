@@ -68,7 +68,7 @@ class LoaferRunner:
             self._on_stop_callback()
 
         logger.info('cancel schedulled operations ...')
-        with suppress(CancelledError):
+        with suppress(CancelledError, RuntimeError):
             self._cancel_all_tasks()
 
         self._executor.shutdown(wait=True)
