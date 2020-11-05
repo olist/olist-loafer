@@ -1,6 +1,6 @@
 import asyncio
-from unittest import mock
 from contextlib import nullcontext as does_not_raise
+from unittest import mock
 
 import pytest
 
