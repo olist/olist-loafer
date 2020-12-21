@@ -21,6 +21,9 @@ def dummy_provider():
         async def confirm_message(self):
             raise AssertionError('I should not be called')
 
+        async def message_not_processed(self):
+            raise AssertionError('I should not be called')
+
         def stop(self):
             raise AssertionError('I should not be called')
 
