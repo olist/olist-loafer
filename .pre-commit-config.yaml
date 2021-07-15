@@ -18,25 +18,25 @@ repos:
       - id: no-commit-to-branch
         args: [-b, main]
 
+  - repo: local
+    hooks:
+      - id: check-datetime-now
+        name: check_datetime_nowpyenv
+        description: Prefer datetime.utcnow()
+        language: pygrep
+        entry: 'datetime\.now\(\)'
+        types: [python]
+
   - repo: https://gitlab.com/PyCQA/flake8
     rev: 3.9.2
     hooks:
       - id: flake8
         args: ["--exclude=docs/*", "--ignore=E501"]
 
-  - repo: https://github.com/pre-commit/mirrors-isort
-    rev: v4.3.17
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.9.2
     hooks:
       - id: isort
-
-  - repo: local
-    hooks:
-      - id: check-datetime-now
-        name: check_datetime_now
-        description: Prefer datetime.utcnow()
-        language: pygrep
-        entry: 'datetime\.now\(\)'
-        types: [python]
 
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: v1.3.0
