@@ -43,6 +43,13 @@ repos:
     hooks:
       - id: python-check-mock-methods
 
+  - repo: https://github.com/PyCQA/pydocstyle
+    rev: 6.1.1
+    hooks:
+      - id: pydocstyle
+        additional_dependencies: ["toml"]
+        args: [--add-ignore=D1, -e]
+
   - repo: https://github.com/olist/hulks.git
     rev: 0.4.0
     hooks:
