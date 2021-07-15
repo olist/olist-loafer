@@ -1,8 +1,0 @@
--r test.txt
-aiobotocore>=1.0.0
-Sphinx
-sphinx-autobuild
-cached-property
-wheel
-sphinx-rtd-theme
-seqdiag
