@@ -1,5 +1,5 @@
 repos:
-  - repo: git@github.com:pre-commit/pre-commit-hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.1.0
     hooks:
       - id: debug-statements
@@ -17,6 +17,10 @@ repos:
       - id: forbid-new-submodules
       - id: no-commit-to-branch
         args: [-b, main]
+
+  - repo: https://gitlab.com/PyCQA/flake8
+    rev: 3.9.2
+    hooks:
       - id: flake8
         args: ["--exclude=docs/*", "--ignore=E501"]
 
@@ -39,7 +43,7 @@ repos:
     hooks:
       - id: python-check-mock-methods
 
-  - repo: git@github.com:olist/hulks.git
+  - repo: https://github.com/olist/hulks.git
     rev: 0.4.0
     hooks:
       - id: check-logger
