@@ -25,11 +25,11 @@ class SQSProvider(AbstractProvider, BaseSQSClient):
         super().__init__(**kwargs)
 
     def __str__(self):
-        return "<{}: {}>".format(type(self).__name__, self.queue_name)
+        return f"<{type(self).__name__}: {self.queue_name}>"
 
     async def confirm_message(self, message):
         receipt = message["ReceiptHandle"]
-        logger.info("confirm message (ack/deletion), receipt={!r}".format(receipt))
+        logger.info(f"confirm message (ack/deletion), receipt={receipt!r}")
 
         queue_url = await self.get_queue_url(self.queue_name)
         try:
@@ -63,15 +63,13 @@ class SQSProvider(AbstractProvider, BaseSQSClient):
                 )
 
     async def fetch_messages(self):
-        logger.debug("fetching messages on {}".format(self.queue_name))
+        logger.debug(f"fetching messages on {self.queue_name}")
         try:
             queue_url = await self.get_queue_url(self.queue_name)
             async with self.get_client() as client:
                 response = await client.receive_message(QueueUrl=queue_url, **self._options)
         except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as exc:
-            raise ProviderError(
-                "error fetching messages from queue={}: {}".format(self.queue_name, str(exc))
-            ) from exc
+            raise ProviderError(f"error fetching messages from queue={self.queue_name}: {str(exc)}") from exc
 
         return response.get("Messages", [])
 
@@ -80,7 +78,7 @@ class SQSProvider(AbstractProvider, BaseSQSClient):
             await client.close()
 
     def stop(self):
-        logger.info("stopping {}".format(self))
+        logger.info(f"stopping {self}")
         loop = asyncio.get_event_loop()
         try:
             loop.run_until_complete(self._client_stop())

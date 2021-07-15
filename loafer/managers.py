@@ -25,7 +25,7 @@ class LoaferManager:
     @cached_property
     def dispatcher(self):
         if not (self.routes and all(isinstance(r, Route) for r in self.routes)):
-            raise ConfigurationError("invalid routes to dispatch, routes={}".format(self.routes))
+            raise ConfigurationError(f"invalid routes to dispatch, routes={self.routes}")
 
         return LoaferDispatcher(self.routes, max_jobs=self._concurrency_limit)
 
@@ -55,7 +55,7 @@ class LoaferManager:
         exc = future.exception()
         # Unhandled errors crashes the event loop execution
         if isinstance(exc, BaseException):
-            logger.critical("fatal error caught: {!r}".format(exc))
+            logger.critical(f"fatal error caught: {exc!r}")
             self.runner.prepare_stop()
 
     def on_loop__stop(self, *args, **kwargs):

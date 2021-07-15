@@ -12,19 +12,19 @@ class Route:
         self.name = name
 
         if not isinstance(provider, AbstractProvider):
-            raise TypeError("invalid provider instance: {!r}".format(provider))
+            raise TypeError(f"invalid provider instance: {provider!r}")
 
         self.provider = provider
 
         if message_translator:
             if not isinstance(message_translator, AbstractMessageTranslator):
-                raise TypeError("invalid message translator instance: {!r}".format(message_translator))
+                raise TypeError(f"invalid message translator instance: {message_translator!r}")
 
         self.message_translator = message_translator
 
         if error_handler:
             if not callable(error_handler):
-                raise TypeError("error_handler must be a callable object: {!r}".format(error_handler))
+                raise TypeError(f"error_handler must be a callable object: {error_handler!r}")
 
         self._error_handler = error_handler
 
@@ -37,7 +37,7 @@ class Route:
 
         if not self.handler:
             raise ValueError(
-                "handler must be a callable object or implement `handle` method: {!r}".format(self.handler)
+                f"handler must be a callable object or implement `handle` method: {self.handler!r}"
             )
 
     def __str__(self):
@@ -54,17 +54,17 @@ class Route:
         processed_message["metadata"].update(translated.get("metadata", {}))
         processed_message["content"] = translated["content"]
         if not processed_message["content"]:
-            raise ValueError("{} failed to translate message={}".format(self.message_translator, message))
+            raise ValueError(f"{self.message_translator} failed to translate message={message}")
 
         return processed_message
 
     async def deliver(self, raw_message):
         message = self.apply_message_translator(raw_message)
-        logger.info("delivering message route={}, message={!r}".format(self, message))
+        logger.info(f"delivering message route={self}, message={message!r}")
         return await run_in_loop_or_executor(self.handler, message["content"], message["metadata"])
 
     async def error_handler(self, exc_info, message):
-        logger.info("error handler process originated by message={}".format(message))
+        logger.info(f"error handler process originated by message={message}")
 
         if self._error_handler is not None:
             return await run_in_loop_or_executor(self._error_handler, exc_info, message)
@@ -72,7 +72,7 @@ class Route:
         return False
 
     def stop(self):
-        logger.info("stopping route {}".format(self))
+        logger.info(f"stopping route {self}")
         self.provider.stop()
         # only for class-based handlers
         if hasattr(self._handler_instance, "stop"):

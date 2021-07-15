@@ -26,7 +26,7 @@ class _BotoClient:
 
     async def stop(self):
         async with self.get_client() as client:
-            logger.info("closing client{}".format(client))
+            logger.info(f"closing client{client}")
             await client.close()
 
 
@@ -58,4 +58,4 @@ class BaseSNSClient(_BotoClient):
         arn_prefix = "arn:aws:sns:"
         if topic.startswith(arn_prefix):
             return topic
-        return "{}*:{}".format(arn_prefix, topic)
+        return f"{arn_prefix}*:{topic}"

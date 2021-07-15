@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # Loafer documentation build configuration file, created by
 # sphinx-quickstart on Tue Apr 12 03:26:33 2016.

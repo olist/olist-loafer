@@ -33,8 +33,8 @@ class LoaferRunner:
         finally:
             self.stop()
             self.loop.close()
-            logger.debug("loop.is_running={}".format(self.loop.is_running()))
-            logger.debug("loop.is_closed={}".format(self.loop.is_closed()))
+            logger.debug(f"loop.is_running={self.loop.is_running()}")
+            logger.debug(f"loop.is_closed={self.loop.is_closed()}")
 
     def prepare_stop(self, *args):
         if self.loop.is_running():

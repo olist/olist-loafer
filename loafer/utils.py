@@ -33,7 +33,7 @@ def import_callable(full_name):
     try:
         module = importlib.import_module(package)
     except ValueError as exc:
-        raise ImportError("Error trying to import {!r}".format(full_name)) from exc
+        raise ImportError(f"Error trying to import {full_name!r}") from exc
 
     if name:
         handler = getattr(module, name[0])
@@ -41,18 +41,18 @@ def import_callable(full_name):
         handler = module
 
     if not callable(handler):
-        raise ImportError("{!r} should be callable".format(full_name))
+        raise ImportError(f"{full_name!r} should be callable")
 
     return handler
 
 
 async def run_in_loop_or_executor(func, *args):
     if asyncio.iscoroutinefunction(func):
-        logger.debug("handler is coroutine! {!r}".format(func))
+        logger.debug(f"handler is coroutine! {func!r}")
         return await func(*args)
 
     loop = asyncio.get_event_loop()
-    logger.debug("handler will run in a separate thread: {!r}".format(func))
+    logger.debug(f"handler will run in a separate thread: {func!r}")
     return await loop.run_in_executor(None, func, *args)
 
 
