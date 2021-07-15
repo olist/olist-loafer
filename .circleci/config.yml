@@ -11,37 +11,31 @@ jobs:
       - checkout
 
       - restore_cache:
-          key: deps-{{ .Branch }}-{{ checksum "setup.py" }}
+          key: deps-{{ checksum "poetry.lock" }}
 
       - run:
           name: install
           command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install -r requirements/test.txt
-            pip install -e .
+            poetry install
 
       - save_cache:
-          key: deps-{{ .Branch }}-{{ checksum "setup.py" }}
+          key: deps-{{ checksum "poetry.lock" }}
           paths:
-            - "venv"
+            - /home/circleci/.cache/pypoetry/virtualenvs
 
       - run:
           name: linters
           command: |
-            . venv/bin/activate
-            SKIP=$PRE_COMMIT_SKIP pre-commit run -a -v
+            SKIP=$PRE_COMMIT_SKIP poetry run pre-commit run -a -v
 
       - run:
           name: tests
           command: |
-            . venv/bin/activate
             make test-cov
 
       - run:
           name: check-fixtures
           command: |
-            . venv/bin/activate
             make check-fixtures
 
   build_py38:
