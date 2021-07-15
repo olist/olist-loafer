@@ -7,7 +7,7 @@ import pytest
 from loafer.runners import LoaferRunner
 
 
-@mock.patch('loafer.runners.LoaferRunner.loop', new_callable=mock.PropertyMock)
+@mock.patch("loafer.runners.LoaferRunner.loop", new_callable=mock.PropertyMock)
 def test_runner_start(loop_mock):
     runner = LoaferRunner()
 
@@ -16,7 +16,7 @@ def test_runner_start(loop_mock):
     assert loop_mock.return_value.run_forever.called
 
 
-@mock.patch('loafer.runners.LoaferRunner.loop', new_callable=mock.PropertyMock)
+@mock.patch("loafer.runners.LoaferRunner.loop", new_callable=mock.PropertyMock)
 def test_runner_start_with_debug(loop_mock):
     runner = LoaferRunner()
 
@@ -25,7 +25,7 @@ def test_runner_start_with_debug(loop_mock):
     loop_mock.return_value.set_debug.assert_called_once_with(enabled=True)
 
 
-@mock.patch('loafer.runners.LoaferRunner.loop', new_callable=mock.PropertyMock)
+@mock.patch("loafer.runners.LoaferRunner.loop", new_callable=mock.PropertyMock)
 def test_runner_start_and_stop(loop_mock):
     runner = LoaferRunner()
     runner.stop = mock.Mock()
@@ -37,7 +37,7 @@ def test_runner_start_and_stop(loop_mock):
     assert loop_mock.return_value.close.called
 
 
-@mock.patch('loafer.runners.LoaferRunner.loop', new_callable=mock.PropertyMock)
+@mock.patch("loafer.runners.LoaferRunner.loop", new_callable=mock.PropertyMock)
 def test_runner_prepare_stop(loop_mock):
     loop_mock.return_value.is_running.return_value = True
     runner = LoaferRunner()
@@ -47,7 +47,7 @@ def test_runner_prepare_stop(loop_mock):
     loop_mock.return_value.stop.assert_called_once_with()
 
 
-@mock.patch('loafer.runners.asyncio.get_event_loop')
+@mock.patch("loafer.runners.asyncio.get_event_loop")
 def test_runner_prepare_stop_already_stopped(get_loop_mock):
     loop = mock.Mock(is_running=mock.Mock(return_value=False))
     get_loop_mock.return_value = loop
@@ -59,7 +59,7 @@ def test_runner_prepare_stop_already_stopped(get_loop_mock):
     assert loop.stop.called is False
 
 
-@mock.patch('loafer.runners.asyncio.get_event_loop')
+@mock.patch("loafer.runners.asyncio.get_event_loop")
 def test_runner_stop_with_callback(loop_mock):
     callback = mock.Mock()
     runner = LoaferRunner(on_stop_callback=callback)

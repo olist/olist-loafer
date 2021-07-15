@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 
 
 class LoaferManager:
-
     def __init__(self, routes, runner=None, _concurrency_limit=None, _max_threads=None):
         self._concurrency_limit = _concurrency_limit
         if runner is None:
@@ -26,7 +25,7 @@ class LoaferManager:
     @cached_property
     def dispatcher(self):
         if not (self.routes and all(isinstance(r, Route) for r in self.routes)):
-            raise ConfigurationError('invalid routes to dispatch, routes={}'.format(self.routes))
+            raise ConfigurationError(f"invalid routes to dispatch, routes={self.routes}")
 
         return LoaferDispatcher(self.routes, max_jobs=self._concurrency_limit)
 
@@ -41,7 +40,7 @@ class LoaferManager:
         if not forever:
             self._future.add_done_callback(self.runner.prepare_stop)
 
-        start = 'starting loafer, pid={}, forever={}'
+        start = "starting loafer, pid={}, forever={}"
         logger.info(start.format(os.getpid(), forever))
         self.runner.start(debug=debug)
 
@@ -56,13 +55,13 @@ class LoaferManager:
         exc = future.exception()
         # Unhandled errors crashes the event loop execution
         if isinstance(exc, BaseException):
-            logger.critical('fatal error caught: {!r}'.format(exc))
+            logger.critical(f"fatal error caught: {exc!r}")
             self.runner.prepare_stop()
 
     def on_loop__stop(self, *args, **kwargs):
-        logger.info('cancel dispatcher operations ...')
+        logger.info("cancel dispatcher operations ...")
 
-        if hasattr(self, '_future'):
+        if hasattr(self, "_future"):
             self._future.cancel()
 
         self.dispatcher.stop()

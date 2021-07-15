@@ -43,6 +43,6 @@ release: twine clean dist
 	twine upload dist/*.whl dist/*.tar.gz
 
 changelog-preview:
-	@echo "\nmaster ("$$(date '+%Y-%m-%d')")"
+	@echo "\nmain ("$$(date '+%Y-%m-%d')")"
 	@echo "-------------------\n"
-	@git log $$(python setup.py -q version)...master --oneline --reverse
+	@git log $$(python setup.py -q version)...main --oneline --reverse
