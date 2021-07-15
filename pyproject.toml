@@ -1,3 +1,11 @@
 [tool.black]
 line-length = 110
 target-version = ["py37"]
+
+[tool.isort]
+line_length = 100
+multi_line_output = 3
+known_localfolder = ["loafer", "tests"]
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "LOCALFOLDER"]
+default_section = "THIRDPARTY"
+include_trailing_comma = true
