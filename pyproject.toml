@@ -9,3 +9,7 @@ known_localfolder = ["loafer", "tests"]
 sections = ["FUTURE", "STDLIB", "THIRDPARTY", "LOCALFOLDER"]
 default_section = "THIRDPARTY"
 include_trailing_comma = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-vv --cov=loafer --cov-report=term-missing"
