@@ -36,3 +36,11 @@ if __name__ == '__main__':
     manager = LoaferManager(routes)
     manager.run()
 ```
+
+## How to contribute
+
+Fork this repository, make changes and send us a pull request. We will review your changes and apply them. Before sending us your pull request please check if you wrote and ran tests:
+
+```bash
+make test
+```
