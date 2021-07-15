@@ -2,7 +2,6 @@ import abc
 
 
 class AbstractProvider(abc.ABC):
-
     @abc.abstractmethod
     async def fetch_messages(self):
         """Return a sequence of messages to be processed.

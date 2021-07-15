@@ -8,45 +8,44 @@ from loafer.utils import add_current_dir_to_syspath, calculate_backoff_multiplie
 
 
 def test_import_function():
-    func = import_callable('loafer.utils.import_callable')
+    func = import_callable("loafer.utils.import_callable")
     assert callable(func)
     assert inspect.isfunction(func)
 
 
 def test_import_class():
-    klass = import_callable('loafer.exceptions.ProviderError')
-    assert klass.__name__ == 'ProviderError'
+    klass = import_callable("loafer.exceptions.ProviderError")
+    assert klass.__name__ == "ProviderError"
     assert inspect.isclass(klass)
 
 
 def test_error_on_method_name():
     with pytest.raises(ImportError):
-        import_callable('unittest.mock.Mock.call_count')
+        import_callable("unittest.mock.Mock.call_count")
 
 
 def test_error_on_invalid_name():
     with pytest.raises(ImportError):
-        import_callable('invalid-1234')
+        import_callable("invalid-1234")
 
     with pytest.raises(ImportError):
-        import_callable('')
+        import_callable("")
 
 
 def test_error_on_module():
     with pytest.raises(ImportError):
-        import_callable('examples')
+        import_callable("examples")
 
 
 def test_error_on_non_callable():
     with pytest.raises(ImportError):
-        import_callable('loafer')
+        import_callable("loafer")
 
 
-@pytest.mark.xfail(os.getcwd() == '/tmp', run=False,
-                   reason='This test is invalid if you are at /tmp')
+@pytest.mark.xfail(os.getcwd() == "/tmp", run=False, reason="This test is invalid if you are at /tmp")
 def test_current_dir_in_syspath():
     old_current = os.getcwd()
-    os.chdir('/tmp')
+    os.chdir("/tmp")
     current = os.getcwd()
     if current not in sys.path:
         sys.path.append(current)
@@ -62,11 +61,10 @@ def test_current_dir_in_syspath():
     os.chdir(old_current)
 
 
-@pytest.mark.xfail(os.getcwd() == '/tmp', run=False,
-                   reason='This test is invalid if you are at /tmp')
+@pytest.mark.xfail(os.getcwd() == "/tmp", run=False, reason="This test is invalid if you are at /tmp")
 def test_current_dir_not_in_syspath():
     old_current = os.getcwd()
-    os.chdir('/tmp')
+    os.chdir("/tmp")
     current = os.getcwd()
 
     @add_current_dir_to_syspath
@@ -79,13 +77,16 @@ def test_current_dir_not_in_syspath():
     os.chdir(old_current)
 
 
-@pytest.mark.parametrize("number_of_tries, backoff_factor, expected", [
-    (0, 1.5, 1),
-    (1, 1.5, 1.5),
-    (2, 1.5, 2.25),
-    (3, 1.5, 3.375),
-    (4, 1.5, 5.0625),
-    (5, 1.5, 7.59375),
-])
+@pytest.mark.parametrize(
+    "number_of_tries, backoff_factor, expected",
+    [
+        (0, 1.5, 1),
+        (1, 1.5, 1.5),
+        (2, 1.5, 2.25),
+        (3, 1.5, 3.375),
+        (4, 1.5, 5.0625),
+        (5, 1.5, 7.59375),
+    ],
+)
 def test_calculate_backoff_multiplier(number_of_tries, backoff_factor, expected):
     assert calculate_backoff_multiplier(number_of_tries, backoff_factor) == expected

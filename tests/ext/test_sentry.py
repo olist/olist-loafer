@@ -26,9 +26,7 @@ def test_sentry_handler():
 
     assert delete_message is False
     assert sdk_mocked.push_scope.called
-    mock_scope.set_extra.assert_called_once_with(
-        "message", "test"
-    )
+    mock_scope.set_extra.assert_called_once_with("message", "test")
     sdk_mocked.capture_exception.assert_called_once_with(exc_info)
 
 
@@ -44,7 +42,5 @@ def test_sentry_handler_delete_message():
 
     assert delete_message is True
     assert sdk_mocked.push_scope.called
-    mock_scope.set_extra.assert_called_once_with(
-        "message", "test"
-    )
+    mock_scope.set_extra.assert_called_once_with("message", "test")
     sdk_mocked.capture_exception.assert_called_once_with(exc_info)

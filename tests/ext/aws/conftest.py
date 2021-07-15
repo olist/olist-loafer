@@ -8,30 +8,33 @@ from asynctest import CoroutineMock
 
 @pytest.fixture
 def queue_url():
-    queue_url = 'https://sqs.us-east-1.amazonaws.com/123456789012/queue-name'
-    return {'QueueUrl': queue_url}
+    queue_url = "https://sqs.us-east-1.amazonaws.com/123456789012/queue-name"
+    return {"QueueUrl": queue_url}
 
 
 @pytest.fixture
 def sqs_message():
-    message = {'Body': 'test'}
-    return {'Messages': [message]}
+    message = {"Body": "test"}
+    return {"Messages": [message]}
 
 
 def sqs_send_message():
-    return {'MessageId': 'uuid', 'MD5OfMessageBody': 'md5',
-            'ResponseMetada': {'RequestId': 'uuid', 'HTTPStatusCode': 200}}
+    return {
+        "MessageId": "uuid",
+        "MD5OfMessageBody": "md5",
+        "ResponseMetada": {"RequestId": "uuid", "HTTPStatusCode": 200},
+    }
 
 
 @pytest.fixture
 def sns_list_topics():
-    return {'Topics': [{'TopicArn': 'arn:aws:sns:region:id:topic-name'}]}
+    return {"Topics": [{"TopicArn": "arn:aws:sns:region:id:topic-name"}]}
 
 
 @pytest.fixture
 def sns_publish():
-    return {'ResponseMetadata': {'HTTPStatusCode': 200, 'RequestId': 'uuid'},
-            'MessageId': 'uuid'}
+    return {"ResponseMetadata": {"HTTPStatusCode": 200, "RequestId": "uuid"}, "MessageId": "uuid"}
+
 
 # boto client mock
 
@@ -63,7 +66,7 @@ def boto_client_sqs(queue_url, sqs_message):
 def mock_boto_session_sqs(boto_client_sqs):
     mock_session = mock.Mock()
     mock_session.create_client.return_value = ClientContextCreator(boto_client_sqs)
-    return mock.patch('aiobotocore.get_session', return_value=mock_session)
+    return mock.patch("aiobotocore.get_session", return_value=mock_session)
 
 
 @pytest.fixture
@@ -78,4 +81,4 @@ def boto_client_sns(sns_publish, sns_list_topics):
 def mock_boto_session_sns(boto_client_sns):
     mock_session = mock.Mock()
     mock_session.create_client.return_value = ClientContextCreator(boto_client_sns)
-    return mock.patch('aiobotocore.get_session', return_value=mock_session)
+    return mock.patch("aiobotocore.get_session", return_value=mock_session)

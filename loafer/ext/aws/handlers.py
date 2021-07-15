@@ -14,16 +14,16 @@ class SQSHandler(BaseSQSClient):
         super().__init__(**kwargs)
 
     def __str__(self):
-        return '<{}: {}>'.format(type(self).__name__, self.queue_name)
+        return "<{}: {}>".format(type(self).__name__, self.queue_name)
 
     async def publish(self, message, encoder=json.dumps):
         if not self.queue_name:
-            raise ValueError('{}: missing queue_name attribute'.format(type(self).__name__))
+            raise ValueError("{}: missing queue_name attribute".format(type(self).__name__))
 
         if encoder:
             message = encoder(message)
 
-        logger.debug('publishing, queue={}, message={}'.format(self.queue_name, message))
+        logger.debug("publishing, queue={}, message={}".format(self.queue_name, message))
 
         queue_url = await self.get_queue_url(self.queue_name)
         async with self.get_client() as client:
@@ -41,21 +41,21 @@ class SNSHandler(BaseSNSClient):
         super().__init__(**kwargs)
 
     def __str__(self):
-        return '<{}: {}>'.format(type(self).__name__, self.topic)
+        return "<{}: {}>".format(type(self).__name__, self.topic)
 
     async def publish(self, message, encoder=json.dumps):
         if not self.topic:
-            raise ValueError('{}: missing topic attribute'.format(type(self).__name__))
+            raise ValueError("{}: missing topic attribute".format(type(self).__name__))
 
         if encoder:
             message = encoder(message)
 
         topic_arn = await self.get_topic_arn(self.topic)
-        logger.debug('publishing, topic={}, message={}'.format(topic_arn, message))
+        logger.debug("publishing, topic={}, message={}".format(topic_arn, message))
 
-        msg = json.dumps({'default': message})
+        msg = json.dumps({"default": message})
         async with self.get_client() as client:
-            return await client.publish(TopicArn=topic_arn, MessageStructure='json', Message=msg)
+            return await client.publish(TopicArn=topic_arn, MessageStructure="json", Message=msg)
 
     async def handle(self, message, *args):
         return await self.publish(message)
