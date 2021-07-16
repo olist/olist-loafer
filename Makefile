@@ -41,4 +41,4 @@ release: dist
 changelog-preview:
 	@echo "\nmain ("$$(date '+%Y-%m-%d')")"
 	@echo "-------------------\n"
-	@git log $$(python setup.py -q version)...main --oneline --reverse
+	@git log $$(poetry version -s)...main --oneline --reverse
