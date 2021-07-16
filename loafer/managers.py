@@ -2,12 +2,15 @@ import asyncio
 import logging
 import os
 
-from cached_property import cached_property
-
 from .dispatchers import LoaferDispatcher
 from .exceptions import ConfigurationError
 from .routes import Route
 from .runners import LoaferRunner
+
+try:
+    from functools import cached_property
+except ImportError:
+    from cached_property import cached_property
 
 logger = logging.getLogger(__name__)
 
