@@ -16,33 +16,29 @@ clean-dist:
 clean: clean-pyc clean-dist
 
 test:
-	pytest -vv tests
+	poetry run pytest -vv tests
 
 test-cov:
-	pytest -vv --cov=loafer tests
+	poetry run pytest -vv --cov=loafer tests
 
 cov:
-	coverage report -m
+	poetry run coverage report -m
 
 cov-report:
-	pytest -vv --cov=loafer --cov-report=html tests
+	poetry run pytest -vv --cov=loafer --cov-report=html tests
 
 check-fixtures:
-	pytest --dead-fixtures
+	poetry run pytest --dead-fixtures
 
 dist: clean
-	python setup.py sdist
-	python setup.py bdist_wheel
+	poetry build
 
-twine:
-	pip install twine
-
-release: twine clean dist
-	git tag `python setup.py -q version`
-	git push origin `python setup.py -q version`
-	twine upload dist/*.whl dist/*.tar.gz
+release: dist
+	git tag `poetry version -s`
+	git push origin `poetry version -s`
+	poetry publish
 
 changelog-preview:
 	@echo "\nmain ("$$(date '+%Y-%m-%d')")"
 	@echo "-------------------\n"
-	@git log $$(python setup.py -q version)...main --oneline --reverse
+	@git log $$(poetry version -s)...main --oneline --reverse
