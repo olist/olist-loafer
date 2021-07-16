@@ -40,8 +40,7 @@ class LoaferManager:
         if not forever:
             self._future.add_done_callback(self.runner.prepare_stop)
 
-        start = "starting loafer, pid={}, forever={}"
-        logger.info(start.format(os.getpid(), forever))
+        logger.info(f"starting loafer, pid={os.getpid()}, forever={forever}")
         self.runner.start(debug=debug)
 
     #
