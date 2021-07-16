@@ -33,9 +33,9 @@ check-fixtures:
 dist: clean
 	poetry build
 
-release: twine clean dist
-	git tag `python setup.py -q version`
-	git push origin `python setup.py -q version`
+release: dist
+	git tag `poetry version -s`
+	git push origin `poetry version -s`
 	poetry publish
 
 changelog-preview:

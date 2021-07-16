@@ -16,7 +16,7 @@ addopts = "-vv --cov=loafer --cov-report=term-missing"
 
 [tool.poetry]
 name = "olist-loafer"
-version = "3.0.4"
+version = "3.0.5"
 description = "Asynchronous message dispatcher for concurrent tasks processing"
 license = "MIT"
 authors = ["Olist <developers@olist.com>"]
