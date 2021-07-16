@@ -32,7 +32,7 @@ class VersionCommand(Command):
         print(version)
 
 
-with codecs.open(os.path.join(here, "README.rst"), encoding="utf-8") as f:
+with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as f:
     long_description = f"\n{f.read()}"
 
 with codecs.open(os.path.join(here, "CHANGES.rst"), encoding="utf-8") as f:
@@ -68,6 +68,7 @@ setup(
     version=version,
     description="Asynchronous message dispatcher for concurrent tasks processing",
     long_description=long_description,
+    long_description_content_type="text/markdown",
     url="https://github.com/olist/olist-loafer/",
     download_url="https://github.com/olist/olist-loafer/releases",
     license="MIT",
