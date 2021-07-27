@@ -7,7 +7,7 @@ class KafkaRoute(Route):
         provider_options = provider_options or {}
         provider = KafkaSimpleProvider(provider_queue, **provider_options)
         kwargs["provider"] = provider
-        
+
         if "name" not in kwargs:
             kwargs["name"] = provider_queue
 

@@ -4,9 +4,8 @@ import logging
 from aiokafka import AIOKafkaConsumer
 
 from loafer.exceptions import ProviderError, ProviderRuntimeError
-from loafer.providers import AbstractProvider
 from loafer.ext.apache.rebalance_listener import KafkaRebalanceListener
-
+from loafer.providers import AbstractProvider
 
 logger = logging.getLogger(__name__)
 
@@ -14,22 +13,21 @@ logger = logging.getLogger(__name__)
 class KafkaSimpleProvider(AbstractProvider):
     def __init__(self, queue_name, options=None, **kwargs):
         self.queue_name = queue_name
-        
+
         self._client_options = {
-            'bootstrap_servers': kwargs.get("bootstrap_servers", None),
-            'sasl_mechanism': kwargs.get("sasl_mechanism", None),
-            'security_protocol': kwargs.get("security_protocol", "PLAINTEXT"),
-            'sasl_plain_username': kwargs.get("sasl_plain_username", None),
-            'sasl_plain_password': kwargs.get("sasl_plain_password", None),
-            'ssl_context': kwargs.get("ssl_context", None),
-            'group_id': kwargs.get("group_id", "mygroup"),
-            'value_deserializer': kwargs.get("value_deserializer", None),
-            'auto_offset_reset': kwargs.get("auto_offset_reset", "latest"),
-            'enable_auto_commit': False, 
+            "bootstrap_servers": kwargs.get("bootstrap_servers", None),
+            "sasl_mechanism": kwargs.get("sasl_mechanism", None),
+            "security_protocol": kwargs.get("security_protocol", "PLAINTEXT"),
+            "sasl_plain_username": kwargs.get("sasl_plain_username", None),
+            "sasl_plain_password": kwargs.get("sasl_plain_password", None),
+            "ssl_context": kwargs.get("ssl_context", None),
+            "group_id": kwargs.get("group_id", "mygroup"),
+            "value_deserializer": kwargs.get("value_deserializer", None),
+            "auto_offset_reset": kwargs.get("auto_offset_reset", "latest"),
+            "enable_auto_commit": False,
         }
         logger.debug(f"Start {self} with options: {self._client_options}")
         self._rebalance_listener = None
-
 
     def __str__(self):
         return f"<{type(self).__name__}: {self.queue_name}>"
@@ -66,7 +64,7 @@ class KafkaSimpleProvider(AbstractProvider):
                 await client.commit()
                 logger.debug(f"fetching messages done {self.queue_name} {len(messages)} msgs")
                 self._rebalance_listener.clear_offsets()
-                
+
         except Exception as exc:
             raise ProviderError(f"error fetching messages from queue={self.queue_name}: {str(exc)}") from exc
 
