@@ -1,15 +1,15 @@
-import abc
+from abc import ABC, abstractmethod
 
 
-class AbstractProvider(abc.ABC):
-    @abc.abstractmethod
+class AbstractProvider(ABC):
+    @abstractmethod
     async def fetch_messages(self):
         """Return a sequence of messages to be processed.
 
         If no messages are available, this coroutine should return an empty list.
         """
 
-    @abc.abstractmethod
+    @abstractmethod
     async def confirm_message(self, message):
         """Confirm the message processing.
 
@@ -27,4 +27,14 @@ class AbstractProvider(abc.ABC):
         If needed, the provider should perform clean-up actions.
         This method is called whenever we need to shutdown the provider.
         """
+        pass
+
+
+class AbstractStreamingProvider(AbstractProvider):
+    """Abstract Base Class for streaming providers.
+
+    Streaming providers (eg. Kafka) add some manual handling.
+    """
+
+    async def confirm_message(self, message):
         pass

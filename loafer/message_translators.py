@@ -1,11 +1,11 @@
-import abc
 import logging
+from abc import ABC, abstractmethod
 
 logger = logging.getLogger(__name__)
 
 
-class AbstractMessageTranslator(abc.ABC):
-    @abc.abstractmethod
+class AbstractMessageTranslator(ABC):
+    @abstractmethod
     def translate(self, message):
         """Translate a given message to an appropriate format to message processing.
 
