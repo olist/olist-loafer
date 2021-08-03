@@ -4,7 +4,7 @@ from unittest import mock
 
 import pytest
 
-from loafer.runners import LoaferRunner
+from loafer import LoaferRunner
 
 
 @mock.patch("loafer.runners.LoaferRunner.loop", new_callable=mock.PropertyMock)

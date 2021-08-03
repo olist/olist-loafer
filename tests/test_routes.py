@@ -3,8 +3,7 @@ from unittest import mock
 import pytest
 from asynctest import CoroutineMock
 
-from loafer.message_translators import StringMessageTranslator
-from loafer.routes import Route
+from loafer import Route, StringMessageTranslator
 
 
 def test_provider(dummy_provider):

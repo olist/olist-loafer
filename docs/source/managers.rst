@@ -7,7 +7,7 @@ The ``LoaferManager`` (at ``loafer.managers``) receives a ``list`` of :doc:`rout
 
 Every service/application using ``loafer`` should instantiate a manager::
 
-    from loafer.managers import LoaferManager
+    from loafer import LoaferManager
     from .routes import routes  # the list of routes
 
     manager = LoaferManager(routes=routes)

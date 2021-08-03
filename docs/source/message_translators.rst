@@ -19,7 +19,7 @@ The message translator class should subclass ``AbstractMessageTranslator`` and
 implement the ``translate`` method like::
 
 
-    from loafer.message_translators import AbstractMessageTranslator
+    from loafer import AbstractMessageTranslator
 
 
     class MyMessageTranslator(AbstractMessageTranslator):

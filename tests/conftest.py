@@ -1,6 +1,6 @@
 import pytest
 
-from loafer.providers import AbstractProvider
+from loafer import AbstractProvider
 
 
 @pytest.fixture

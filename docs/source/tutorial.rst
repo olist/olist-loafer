@@ -47,7 +47,7 @@ The ``routes.py``::
 
 The ``__main__.py``::
 
-    from loafer.managers import LoaferManager
+    from loafer import LoaferManager
     from .routes import routes
 
     manager = LoaferManager(routes=routes)

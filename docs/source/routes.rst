@@ -32,7 +32,7 @@ Examples
 Some examples of route creation::
 
     from loafer.ext.aws import SQSRoute, SNSQueueRoute
-    from loafer.message_translators import StringMessageTranslator
+    from loafer import StringMessageTranslator
 
 
     # regular route

@@ -1,4 +1,4 @@
-from loafer.message_translators import StringMessageTranslator
+from loafer import StringMessageTranslator
 
 
 def test_translate():

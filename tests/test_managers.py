@@ -3,11 +3,14 @@ from unittest import mock
 
 import pytest
 
-from loafer.dispatchers import LoaferDispatcher
-from loafer.exceptions import ConfigurationError, ProviderError
-from loafer.managers import LoaferManager
-from loafer.routes import Route
-from loafer.runners import LoaferRunner
+from loafer import (
+    ConfigurationError,
+    LoaferDispatcher,
+    LoaferManager,
+    LoaferRunner,
+    ProviderError,
+    Route,
+)
 
 
 @pytest.fixture
