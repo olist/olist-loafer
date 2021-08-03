@@ -4,7 +4,8 @@ import logging
 import botocore.exceptions
 
 from .bases import BaseSQSClient
-from loafer import AbstractProvider, ProviderError, ProviderRuntimeError
+from loafer.exceptions import ProviderError, ProviderRuntimeError
+from loafer.providers import AbstractProvider
 from loafer.utils import calculate_backoff_multiplier
 
 logger = logging.getLogger(__name__)

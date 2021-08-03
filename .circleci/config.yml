@@ -16,7 +16,7 @@ jobs:
       - run:
           name: install
           command: |
-            poetry install
+            poetry install -E sqs
 
       - save_cache:
           key: deps-{{ checksum "poetry.lock" }}

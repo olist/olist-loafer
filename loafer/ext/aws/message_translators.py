@@ -1,7 +1,7 @@
 import json
 import logging
 
-from loafer import AbstractMessageTranslator
+from loafer.message_translators import AbstractMessageTranslator
 
 logger = logging.getLogger(__name__)
 
