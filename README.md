@@ -24,8 +24,8 @@
 A simple message forwader, from ``source-queue`` to ``destination-queue``:
 
 ```python
-from loafer.ext.aws.handlers import SQSHandler
-from loafer.ext.aws.routes import SQSRoute
+from loafer.ext.aws import SQSHandler
+from loafer.ext.aws import SQSRoute
 from loafer.managers import LoaferManager
 
 routes = [

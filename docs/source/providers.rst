@@ -9,7 +9,7 @@ SQSProvider
 ~~~~~~~~~~~
 
 
-``SQSProvider`` (located at ``loafer.ext.aws.providers``) receives the following options:
+``SQSProvider`` (located at ``loafer.ext.aws``) receives the following options:
 
     * ``queue_name``: the queue name
     * ``options``: (optional): a ``dict`` with SQS options to retrieve messages.

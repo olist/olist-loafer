@@ -51,7 +51,7 @@ loafer.message_translators.StringMessageTranslator
 A message translator that translates the given message to a string (python `str`).
 
 
-loafer.ext.aws.message_translators.SQSMessageTranslator
+loafer.ext.aws.SQSMessageTranslator
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A message translator that translates SQS messages. The expected message body
@@ -61,7 +61,7 @@ All the keys will be kept in ``metadata`` key ``dict`` (except ``Body``
 that was previously translated).
 
 
-loafer.ext.aws.message_translators.SNSMessageTranslator
+loafer.ext.aws.SNSMessageTranslator
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A message translator that translates SQS messages that came from SNS topic.

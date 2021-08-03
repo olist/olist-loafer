@@ -4,7 +4,7 @@ from unittest import mock
 import pytest
 from asynctest import CoroutineMock
 
-from loafer.ext.aws.handlers import SNSHandler, SQSHandler
+from loafer.ext.aws import SNSHandler, SQSHandler
 
 # SQSHandler
 

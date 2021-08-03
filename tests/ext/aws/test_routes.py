@@ -1,6 +1,10 @@
-from loafer.ext.aws.message_translators import SNSMessageTranslator, SQSMessageTranslator
-from loafer.ext.aws.providers import SQSProvider
-from loafer.ext.aws.routes import SNSQueueRoute, SQSRoute
+from loafer.ext.aws import (
+    SNSMessageTranslator,
+    SNSQueueRoute,
+    SQSMessageTranslator,
+    SQSProvider,
+    SQSRoute,
+)
 
 
 def test_sqs_route(dummy_handler):

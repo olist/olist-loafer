@@ -4,7 +4,7 @@ Generic Handlers
 Here are some handlers that are easy to extend or use directly.
 
 
-loafer.ext.aws.handlers.SQSHandler
+loafer.ext.aws.SQSHandler
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A handler that publishes messages to a SQS queue.
@@ -12,7 +12,7 @@ A handler that publishes messages to a SQS queue.
 For instance, if we just want just redirect a message to a queue named "my-queue"::
 
     # in your route definition
-    from loafer.ext.aws.handlers import SQSHandler
+    from loafer.ext.aws import SQSHandler
 
     Route(handler=SQSHandler('my-queue'), ...)
 
@@ -38,14 +38,14 @@ the handler or set the class attribute **queue_name**, both are valid and the
 attribute is mandatory. You can also use the queue URL directly, if you prefer.
 
 
-loafer.ext.aws.handlers.SNSHandler
+loafer.ext.aws.SNSHandler
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A handler that publishes messages to a SNS topic.
 
 This handler is very similar to **SQSHandler**, so going to a similar example::
 
-    from loafer.ext.aws.handlers import SNSHandler
+    from loafer.ext.aws import SNSHandler
 
     class MyHandler(SNSHandler):
         topic = 'my-topic'

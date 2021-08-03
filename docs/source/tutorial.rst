@@ -34,7 +34,7 @@ The ``handlers.py``::
 
 The ``routes.py``::
 
-    from loafer.ext.aws.routes import SQSRoute
+    from loafer.ext.aws import SQSRoute
     from .handlers import print_handler, error_handler
 
     # assuming a queue named "loafer-test"
