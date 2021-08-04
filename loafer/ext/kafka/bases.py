@@ -16,6 +16,7 @@ class KafkaService:
         self._consumer_options = {
             name: value for name, value in client_options.items() if name in consumer_arguments.kwonlyargs
         }
+        self._consumer_options.update({"enable_auto_commit": False})
 
     def get_producer(self):
         return AIOKafkaProducer(**self._producer_options)

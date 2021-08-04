@@ -1,5 +1,6 @@
 import logging
-from typing import Any, Callable, Union
+from itertools import chain
+from typing import Callable, Union
 
 from aiokafka.errors import KafkaError
 
@@ -14,13 +15,13 @@ class KafkaProvider(AbstractStreamingProvider, KafkaService):
     def __init__(
         self,
         topic_name: str,
-        retry_topic: Union[None, str, Callable[[Any], str]] = None,
+        retry_topic: Union[None, str, Callable[[str, int], str]] = None,
         options=None,
         **kwargs,
     ):
         self.topic_name = topic_name
         self._options = options or {}
-        self.retry_topic = retry_topic if callable(retry_topic) else lambda m: retry_topic
+        self.retry_topic = retry_topic if callable(retry_topic) else lambda *_: retry_topic
 
         super().__init__(topic_name, kwargs)
 
@@ -34,21 +35,30 @@ class KafkaProvider(AbstractStreamingProvider, KafkaService):
                 messages = await consumer.getmany(**self._options)
                 await consumer.commit()
             except KafkaError as exc:
-                raise ProviderError(f"error fetching messages from queue={self.topic_name}: {exc}") from exc
+                raise ProviderError(f"error fetching messages from topic={self.topic_name}: {exc!s}") from exc
 
-            return messages
+            return chain.from_iterable(messages.values())
 
     async def message_not_processed(self, message):
         header_map = {name: value for name, value in message.headers}
-        receive_count = header_map.setdefault("ApproximateReceiveCount", 1) + 1
-        header_map["ApproximateReceiveCount"] = receive_count
-        topic_name = t if (t := self.retry_topic(message)) else message.topic
+        receive_count = header_map.setdefault("ApproximateReceiveCount", b"1").decode()
+        receive_count = int(receive_count) + 1
+        header_map["ApproximateReceiveCount"] = str(receive_count).encode()
+
+        topic_name = self.retry_topic(message.topic, receive_count) or message.topic
+        headers = list(header_map.items())
+
+        logger.debug(f"publishing message to {topic_name}. receive_count={receive_count}")
 
         async with self.get_producer() as producer:
-            await producer.send_and_wait(
-                topic_name,
-                message.value,
-                key=message.key,
-                timestamp_ms=message.timestamp,
-                headers=message.headers,
-            )
+            try:
+                await producer.send_and_wait(
+                    topic_name,
+                    message.value,
+                    key=message.key,
+                    timestamp_ms=message.timestamp,
+                    headers=headers,
+                )
+            except (KafkaError, TypeError) as exc:
+                logger.error(exc, exc_info=exc)
+                raise ProviderError(f"error publishing messages to topic={topic_name}: {exc!s}") from exc
