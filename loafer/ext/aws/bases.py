@@ -1,6 +1,6 @@
 import logging
 
-import aiobotocore
+from aiobotocore.session import get_session
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +21,7 @@ class _BotoClient:
         }
 
     def get_client(self):
-        session = aiobotocore.get_session()
+        session = get_session()
         return session.create_client(self.boto_service_name, **self._client_options)
 
     async def stop(self):
