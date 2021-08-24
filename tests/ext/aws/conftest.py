@@ -66,7 +66,7 @@ def boto_client_sqs(queue_url, sqs_message):
 def mock_boto_session_sqs(boto_client_sqs):
     mock_session = mock.Mock()
     mock_session.create_client.return_value = ClientContextCreator(boto_client_sqs)
-    return mock.patch("aiobotocore.session.get_session", return_value=mock_session)
+    return mock.patch("loafer.ext.aws.bases.get_session", return_value=mock_session)
 
 
 @pytest.fixture
@@ -81,4 +81,4 @@ def boto_client_sns(sns_publish, sns_list_topics):
 def mock_boto_session_sns(boto_client_sns):
     mock_session = mock.Mock()
     mock_session.create_client.return_value = ClientContextCreator(boto_client_sns)
-    return mock.patch("aiobotocore.session.get_session", return_value=mock_session)
+    return mock.patch("loafer.ext.aws.bases.get_session", return_value=mock_session)
