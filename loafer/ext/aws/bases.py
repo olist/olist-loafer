@@ -24,11 +24,6 @@ class _BotoClient:
         session = get_session()
         return session.create_client(self.boto_service_name, **self._client_options)
 
-    async def stop(self):
-        async with self.get_client() as client:
-            logger.info(f"closing client{client}")
-            await client.close()
-
 
 class BaseSQSClient(_BotoClient):
     boto_service_name = "sqs"
