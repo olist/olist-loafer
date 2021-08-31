@@ -1,4 +1,10 @@
+3.0.7 (2021-08-24)
+------------------
+
+* Fix error on SQS provider shutdown
+
 3.0.6 (2021-08-24)
+------------------
 
 * Fix aiobotocore compatibility
 
