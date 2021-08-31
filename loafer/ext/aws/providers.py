@@ -1,10 +1,9 @@
-import asyncio
 import logging
 
 import botocore.exceptions
 
 from .bases import BaseSQSClient
-from loafer.exceptions import ProviderError, ProviderRuntimeError
+from loafer.exceptions import ProviderError
 from loafer.providers import AbstractProvider
 from loafer.utils import calculate_backoff_multiplier
 
@@ -73,15 +72,6 @@ class SQSProvider(AbstractProvider, BaseSQSClient):
 
         return response.get("Messages", [])
 
-    async def _client_stop(self):
-        async with self.get_client() as client:
-            await client.close()
-
     def stop(self):
         logger.info(f"stopping {self}")
-        loop = asyncio.get_event_loop()
-        try:
-            loop.run_until_complete(self._client_stop())
-        except RuntimeError as exc:
-            raise ProviderRuntimeError() from exc
         return super().stop()
