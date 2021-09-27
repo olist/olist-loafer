@@ -169,6 +169,7 @@ async def test_backoff_factor_options_with_attributes_names(
         (30, 1.5, 45),
         (30, 1.75, 52),
         (60, 1.5, 90),
+        (30, 1477.89, 43200),
     ],
 )
 async def test_fetch_messages_using_backoff_factor(

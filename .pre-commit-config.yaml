@@ -34,7 +34,7 @@ repos:
         args: ["--exclude=docs/*", "--ignore=E501"]
 
   - repo: https://github.com/PyCQA/isort
-    rev: 5.9.2
+    rev: 5.9.3
     hooks:
       - id: isort
 
@@ -44,7 +44,7 @@ repos:
       - id: python-check-mock-methods
 
   - repo: https://github.com/psf/black
-    rev: 21.6b0
+    rev: 21.9b0
     hooks:
       - id: black
 
@@ -56,7 +56,7 @@ repos:
         args: [--add-ignore=D1, -e]
 
   - repo: https://github.com/asottile/pyupgrade
-    rev: v2.21.1
+    rev: v2.28.0
     hooks:
       - id: pyupgrade
         args: [--py37-plus]

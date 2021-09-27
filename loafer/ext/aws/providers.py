@@ -9,6 +9,8 @@ from loafer.utils import calculate_backoff_multiplier
 
 logger = logging.getLogger(__name__)
 
+VISIBILITY_TIMEOUT_LIMIT = 43200
+
 
 class SQSProvider(AbstractProvider, BaseSQSClient):
     def __init__(self, queue_name, options=None, **kwargs):
@@ -49,6 +51,7 @@ class SQSProvider(AbstractProvider, BaseSQSClient):
             )
 
             custom_visibility_timeout = round(backoff_multiplier * self._options.get("VisibilityTimeout", 30))
+            custom_visibility_timeout = min(custom_visibility_timeout, VISIBILITY_TIMEOUT_LIMIT)
             logger.info(
                 f"message not processed, receipt={receipt!r}, "
                 f"custom_visibility_timeout={custom_visibility_timeout!r}"
