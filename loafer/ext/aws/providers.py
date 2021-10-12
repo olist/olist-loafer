@@ -9,8 +9,6 @@ from loafer.utils import calculate_backoff_multiplier
 
 logger = logging.getLogger(__name__)
 
-VISIBILITY_TIMEOUT_LIMIT = 43200
-
 
 class SQSProvider(AbstractProvider, BaseSQSClient):
     def __init__(self, queue_name, options=None, **kwargs):
@@ -51,18 +49,21 @@ class SQSProvider(AbstractProvider, BaseSQSClient):
             )
 
             custom_visibility_timeout = round(backoff_multiplier * self._options.get("VisibilityTimeout", 30))
-            custom_visibility_timeout = min(custom_visibility_timeout, VISIBILITY_TIMEOUT_LIMIT)
             logger.info(
                 f"message not processed, receipt={receipt!r}, "
                 f"custom_visibility_timeout={custom_visibility_timeout!r}"
             )
             queue_url = await self.get_queue_url(self.queue_name)
-            async with self.get_client() as client:
-                return await client.change_message_visibility(
-                    QueueUrl=queue_url,
-                    ReceiptHandle=receipt,
-                    VisibilityTimeout=custom_visibility_timeout,
-                )
+            try:
+                async with self.get_client() as client:
+                    return await client.change_message_visibility(
+                        QueueUrl=queue_url,
+                        ReceiptHandle=receipt,
+                        VisibilityTimeout=custom_visibility_timeout,
+                    )
+            except botocore.exceptions.ClientError as exc:
+                if "InvalidParameterValue" not in str(exc):
+                    raise
 
     async def fetch_messages(self):
         logger.debug(f"fetching messages on {self.queue_name}")
