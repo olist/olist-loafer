@@ -52,6 +52,13 @@ jobs:
     environment:
       PRE_COMMIT_SKIP=no-commit-to-branch
 
+  build_py310:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.10-bullseye
+    environment:
+      PRE_COMMIT_SKIP=no-commit-to-branch
+
 
 workflows:
   version: 2
@@ -60,6 +67,7 @@ workflows:
       - build_py37
       - build_py38
       - build_py39
+      - build_py310
 
   scheduled:
     triggers:
@@ -73,3 +81,4 @@ workflows:
       - build_py37
       - build_py38
       - build_py39
+      - build_py310
