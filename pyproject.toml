@@ -36,9 +36,7 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Topic :: System :: Distributed Computing",
 ]
-packages = [
-    {include = "loafer"}
-]
+packages = [{ include = "loafer" }]
 
 [tool.poetry.urls]
 "Download" = "https://github.com/olist/olist-loafer/releases"
@@ -49,7 +47,7 @@ aiobotocore = { version = "^1.0.0", extras = ["boto3"] }
 cached-property = "^1.3.0"
 
 [tool.poetry.dev-dependencies]
-asynctest = "*"
+asynctest = { version = "*", python = "<3.8" }
 pre-commit = "*"
 codecov = "*"
 pytest = "*"
