@@ -1,3 +1,4 @@
+from contextlib import nullcontext as does_not_raise
 from unittest import mock
 
 import pytest
@@ -169,7 +170,6 @@ async def test_backoff_factor_options_with_attributes_names(
         (30, 1.5, 45),
         (30, 1.75, 52),
         (60, 1.5, 90),
-        (30, 1477.89, 43200),
     ],
 )
 async def test_fetch_messages_using_backoff_factor(
@@ -197,4 +197,46 @@ async def test_fetch_messages_using_backoff_factor(
             QueueUrl=await provider.get_queue_url("queue-name"),
             ReceiptHandle="message-receipt-handle",
             VisibilityTimeout=expected,
+        )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "error,expectation",
+    [
+        (
+            ClientError(
+                error_response={"Error": {"Code": "InvalidParameterValue"}}, operation_name="whatever"
+            ),
+            does_not_raise(),
+        ),
+        (
+            ClientError(error_response={"Error": {"Code": "Other"}}, operation_name="whatever"),
+            pytest.raises(ClientError),
+        ),
+    ],
+    ids=["InvalidParameterValue", "AnyOtherError"],
+)
+async def test_fetch_messages_change_message_visibility_error(
+    mock_boto_session_sqs, boto_client_sqs, error, expectation
+):
+    boto_client_sqs.change_message_visibility.side_effect = error
+    options = {
+        "WaitTimeSeconds": 5,
+        "MaxNumberOfMessages": 10,
+        "AttributeNames": ["ApproximateReceiveCount"],
+        "BackoffFactor": 1.5,
+        "VisibilityTimeout": 30,
+    }
+    with mock_boto_session_sqs:
+        provider = SQSProvider("queue-name", options=options)
+        message = {"ReceiptHandle": "message-receipt-handle", "Attributes": {"ApproximateReceiveCount": 2}}
+
+        with expectation:
+            await provider.message_not_processed(message)
+
+        boto_client_sqs.change_message_visibility.assert_awaited_once_with(
+            QueueUrl=await provider.get_queue_url("queue-name"),
+            ReceiptHandle="message-receipt-handle",
+            VisibilityTimeout=mock.ANY,
         )
