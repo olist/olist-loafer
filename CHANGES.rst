@@ -1,3 +1,9 @@
+3.0.9 (2021-10-29)
+------------------
+
+* Add Python 3.10 support
+* (sqs) Handle errors while changing VisibilityTimeout
+
 3.0.8 (2021-09-27)
 ------------------
 

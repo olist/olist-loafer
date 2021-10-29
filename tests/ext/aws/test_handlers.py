@@ -2,7 +2,11 @@ import json
 from unittest import mock
 
 import pytest
-from asynctest import CoroutineMock
+
+try:
+    from asynctest import CoroutineMock as AsyncMock
+except ImportError:
+    from unittest.mock import AsyncMock
 
 from loafer.ext.aws.handlers import SNSHandler, SQSHandler
 
@@ -48,7 +52,7 @@ async def test_sqs_handler_publish_without_queue_name():
 @pytest.mark.asyncio
 async def test_sqs_handler_hadle():
     handler = SQSHandler("foobar")
-    handler.publish = CoroutineMock()
+    handler.publish = AsyncMock()
     await handler.handle("message", "metadata")
     assert handler.publish.called
     handler.publish.assert_called_once_with("message")
@@ -100,7 +104,7 @@ async def test_sns_handler_publish_without_topic():
 @pytest.mark.asyncio
 async def test_sns_handler_hadle():
     handler = SNSHandler("foobar")
-    handler.publish = CoroutineMock()
+    handler.publish = AsyncMock()
     await handler.handle("message", "metadata")
     assert handler.publish.called
     handler.publish.assert_called_once_with("message")

@@ -48,7 +48,7 @@ class LoaferRunner:
         for task in to_cancel:
             task.cancel()
 
-        self.loop.run_until_complete(asyncio.gather(*to_cancel, loop=self.loop, return_exceptions=True))
+        self.loop.run_until_complete(asyncio.gather(*to_cancel, return_exceptions=True))
         for task in to_cancel:
             if task.cancelled():
                 continue
