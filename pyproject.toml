@@ -17,7 +17,7 @@ asyncio_mode = "strict"
 
 [tool.poetry]
 name = "olist-loafer"
-version = "3.0.9"
+version = "3.0.10"
 description = "Asynchronous message dispatcher for concurrent tasks processing"
 license = "MIT"
 authors = ["Olist <developers@olist.com>"]
