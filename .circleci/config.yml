@@ -8,6 +8,11 @@ jobs:
       PRE_COMMIT_SKIP=no-commit-to-branch,check-mutable-defaults
 
     steps:
+      - run:
+          name: update-ssh-keys
+          command: |
+            mkdir -p /home/circleci/.ssh && ssh-keyscan -t rsa github.com >> /home/circleci/.ssh/known_hosts
+
       - checkout
 
       - restore_cache:

@@ -57,6 +57,6 @@ async def run_in_loop_or_executor(func, *args):
 
 
 def calculate_backoff_multiplier(number_of_tries, backoff_factor):
-    exponential_factor = backoff_factor ** number_of_tries
+    exponential_factor = backoff_factor**number_of_tries
 
     return exponential_factor
