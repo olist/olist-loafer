@@ -27,14 +27,13 @@ def test_runner_start_with_debug(loop_mock):
 
 @mock.patch("loafer.runners.LoaferRunner.loop", new_callable=mock.PropertyMock)
 def test_runner_start_and_stop(loop_mock):
-    runner = LoaferRunner()
-    runner.stop = mock.Mock()
+    with mock.patch.object(LoaferRunner, "stop"):
+        runner = LoaferRunner()
+        runner.start()
 
-    runner.start()
-
-    assert runner.stop.called
-    assert loop_mock.return_value.run_forever.called
-    assert loop_mock.return_value.close.called
+        assert runner.stop.called
+        assert loop_mock.return_value.run_forever.called
+        assert loop_mock.return_value.close.called
 
 
 @mock.patch("loafer.runners.LoaferRunner.loop", new_callable=mock.PropertyMock)

@@ -8,6 +8,8 @@ logger = logging.getLogger(__name__)
 
 
 class LoaferDispatcher:
+    __slots__ = ["routes", "_semaphore"]
+
     def __init__(self, routes, max_jobs=None):
         self.routes = routes
         jobs = max_jobs or len(routes) * 10

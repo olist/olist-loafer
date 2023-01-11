@@ -193,10 +193,13 @@ async def test_deliver_with_coroutine(dummy_provider):
 @pytest.mark.asyncio
 async def test_deliver_with_message_translator(dummy_provider):
     mock_handler = AsyncMock(return_value=True)
-    route = Route(dummy_provider, mock_handler)
-    route.apply_message_translator = mock.Mock(return_value={"content": "whatever", "metadata": {}})
-    result = await route.deliver("test")
+    with mock.patch.object(
+        Route, "apply_message_translator", return_value={"content": "whatever", "metadata": {}}
+    ) as mock_apply_message_translator:
+        route = Route(dummy_provider, mock_handler)
+        result = await route.deliver("test")
+
     assert result is True
-    assert route.apply_message_translator.called
+    assert mock_apply_message_translator.called
     assert mock_handler.called
     mock_handler.assert_called_once_with("whatever", {})

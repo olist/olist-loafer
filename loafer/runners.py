@@ -8,6 +8,8 @@ logger = logging.getLogger(__name__)
 
 
 class LoaferRunner:
+    __slots__ = ["_on_stop_callback", "_executor"]
+
     def __init__(self, max_workers=None, on_stop_callback=None):
         self._on_stop_callback = on_stop_callback
 

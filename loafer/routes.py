@@ -8,6 +8,8 @@ logger = logging.getLogger(__name__)
 
 
 class Route:
+    __slots__ = ["name", "provider", "message_translator", "_error_handler", "handler", "_handler_instance"]
+
     def __init__(self, provider, handler, name="default", message_translator=None, error_handler=None):
         self.name = name
 

@@ -6,6 +6,8 @@ logger = logging.getLogger(__name__)
 
 
 class _BotoClient:
+    __slots__ = ["_client_options"]
+
     boto_service_name = None
 
     def __init__(self, **client_options):

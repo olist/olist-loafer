@@ -11,6 +11,8 @@ logger = logging.getLogger(__name__)
 
 
 class SQSProvider(AbstractProvider, BaseSQSClient):
+    __slots__ = ["queue_name", "_options", "_backoff_factor"]
+
     def __init__(self, queue_name, options=None, **kwargs):
         self.queue_name = queue_name
         self._options = options or {}

@@ -7,6 +7,8 @@ logger = logging.getLogger(__name__)
 
 
 class SQSMessageTranslator(AbstractMessageTranslator):
+    __slots__ = []
+
     def translate(self, message):
         translated = {"content": None, "metadata": {}}
         try:
@@ -29,6 +31,8 @@ class SQSMessageTranslator(AbstractMessageTranslator):
 
 
 class SNSMessageTranslator(AbstractMessageTranslator):
+    __slots__ = []
+
     def translate(self, message):
         translated = {"content": None, "metadata": {}}
         try:
