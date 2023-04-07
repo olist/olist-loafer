@@ -56,7 +56,9 @@ class LoaferDispatcher:
         for provider_task in asyncio.as_completed(provider_messages_tasks):
             messages, route = await provider_task
 
-            process_messages_tasks += [self._process_message(message, route) for message in messages]
+            process_messages_tasks += [
+                asyncio.create_task(self._process_message(message, route)) for message in messages
+            ]
 
         if not process_messages_tasks:
             return
