@@ -1,3 +1,9 @@
+3.0.12 (2023-04-10)
+------------------
+
+* chore: replace CircleCI with Github Actions
+* perf: start processing messages as soon as a route yields then
+
 3.0.11 (2022-11-08)
 ------------------
 
