@@ -1,12 +1,7 @@
 import asyncio
-from unittest.mock import Mock
+from unittest import mock
 
 import pytest
-
-try:
-    from asynctest import CoroutineMock as AsyncMock
-except ImportError:
-    from unittest.mock import AsyncMock
 
 from loafer.dispatchers import LoaferDispatcher
 from loafer.exceptions import DeleteMessage
@@ -15,23 +10,28 @@ from loafer.routes import Route
 
 @pytest.fixture
 def provider():
-    return AsyncMock(
-        fetch_messages=AsyncMock(return_value=["message"]),
-        confirm_message=AsyncMock(),
-        message_not_processed=AsyncMock(),
+    return mock.AsyncMock(
+        fetch_messages=mock.AsyncMock(return_value=["message"]),
+        confirm_message=mock.AsyncMock(),
+        message_not_processed=mock.AsyncMock(),
     )
 
 
 @pytest.fixture
 def route(provider):
-    message_translator = Mock(translate=Mock(return_value={"content": "message"}))
-    route = AsyncMock(provider=provider, handler=Mock(), message_translator=message_translator, spec=Route)
+    message_translator = mock.Mock(translate=mock.Mock(return_value={"content": "message"}))
+    route = mock.AsyncMock(
+        provider=provider,
+        handler=mock.Mock(),
+        message_translator=message_translator,
+        spec=Route,
+    )
     return route
 
 
 @pytest.mark.asyncio
 async def test_dispatch_message(route):
-    route.deliver = AsyncMock(return_value="confirmation")
+    route.deliver = mock.AsyncMock(return_value="confirmation")
     dispatcher = LoaferDispatcher([route])
 
     message = "foobar"
@@ -45,7 +45,7 @@ async def test_dispatch_message(route):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("message", [None, ""])
 async def test_dispatch_invalid_message(route, message):
-    route.deliver = AsyncMock()
+    route.deliver = mock.AsyncMock()
     dispatcher = LoaferDispatcher([route])
 
     confirmation = await dispatcher.dispatch_message(message, route)
@@ -55,7 +55,7 @@ async def test_dispatch_invalid_message(route, message):
 
 @pytest.mark.asyncio
 async def test_dispatch_message_task_delete_message(route):
-    route.deliver = AsyncMock(side_effect=DeleteMessage)
+    route.deliver = mock.AsyncMock(side_effect=DeleteMessage)
     dispatcher = LoaferDispatcher([route])
 
     message = "rejected-message"
@@ -69,8 +69,8 @@ async def test_dispatch_message_task_delete_message(route):
 @pytest.mark.asyncio
 async def test_dispatch_message_task_error(route):
     exc = Exception()
-    route.deliver = AsyncMock(side_effect=exc)
-    route.error_handler = AsyncMock(return_value="confirmation")
+    route.deliver = mock.AsyncMock(side_effect=exc)
+    route.error_handler = mock.AsyncMock(return_value="confirmation")
     dispatcher = LoaferDispatcher([route])
 
     message = "message"
@@ -84,7 +84,7 @@ async def test_dispatch_message_task_error(route):
 
 @pytest.mark.asyncio
 async def test_dispatch_message_task_cancel(route):
-    route.deliver = AsyncMock(side_effect=asyncio.CancelledError)
+    route.deliver = mock.AsyncMock(side_effect=asyncio.CancelledError)
     dispatcher = LoaferDispatcher([route])
 
     message = "message"
@@ -98,7 +98,7 @@ async def test_dispatch_message_task_cancel(route):
 @pytest.mark.asyncio
 async def test_message_processing(route):
     dispatcher = LoaferDispatcher([route])
-    dispatcher.dispatch_message = AsyncMock()
+    dispatcher.dispatch_message = mock.AsyncMock()
     await dispatcher._process_message("message", route)
 
     assert dispatcher.dispatch_message.called
@@ -111,7 +111,7 @@ async def test_message_processing(route):
 @pytest.mark.asyncio
 async def test_message_processing_unsuccessfully(route):
     dispatcher = LoaferDispatcher([route])
-    dispatcher.dispatch_message = AsyncMock(return_value=False)
+    dispatcher.dispatch_message = mock.AsyncMock(return_value=False)
     await dispatcher._process_message("message", route)
 
     assert dispatcher.dispatch_message.called
@@ -124,7 +124,7 @@ async def test_message_processing_unsuccessfully(route):
 
 @pytest.mark.asyncio
 async def test_dispatch_tasks(route):
-    route.provider.fetch_messages = AsyncMock(return_value=["message"])
+    route.provider.fetch_messages = mock.AsyncMock(return_value=["message"])
     dispatcher = LoaferDispatcher([route])
     await dispatcher._dispatch_tasks()
 
@@ -135,7 +135,7 @@ async def test_dispatch_tasks(route):
 
 @pytest.mark.asyncio
 async def test_dispatch_without_tasks(route, event_loop):
-    route.provider.fetch_messages = AsyncMock(return_value=[])
+    route.provider.fetch_messages = mock.AsyncMock(return_value=[])
     dispatcher = LoaferDispatcher([route])
     await dispatcher._dispatch_tasks()
 
@@ -147,8 +147,8 @@ async def test_dispatch_without_tasks(route, event_loop):
 @pytest.mark.asyncio
 async def test_dispatch_providers(route, event_loop):
     dispatcher = LoaferDispatcher([route])
-    dispatcher._dispatch_tasks = AsyncMock()
-    dispatcher.stop_providers = Mock()
+    dispatcher._dispatch_tasks = mock.AsyncMock()
+    dispatcher.stop_providers = mock.Mock()
     await dispatcher.dispatch_providers(forever=False)
 
     assert dispatcher._dispatch_tasks.called
@@ -164,7 +164,7 @@ async def test_dispatch_providers_with_error(route, event_loop):
 
 
 def test_dispatcher_stop(route):
-    route.stop = Mock()
+    route.stop = mock.Mock()
     dispatcher = LoaferDispatcher([route])
     dispatcher.stop()
     assert route.stop.called

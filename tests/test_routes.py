@@ -2,11 +2,6 @@ from unittest import mock
 
 import pytest
 
-try:
-    from asynctest import CoroutineMock as AsyncMock
-except ImportError:
-    from unittest.mock import AsyncMock
-
 from loafer.message_translators import StringMessageTranslator
 from loafer.routes import Route
 
@@ -99,7 +94,7 @@ async def test_error_handler(dummy_provider):
 
 @pytest.mark.asyncio
 async def test_error_handler_coroutine(dummy_provider):
-    error_handler = AsyncMock(return_value=True)
+    error_handler = mock.AsyncMock(return_value=True)
     route = Route(dummy_provider, mock.Mock(), error_handler=error_handler)
     exc = TypeError()
     exc_info = (type(exc), exc, "traceback")
@@ -181,7 +176,7 @@ async def test_deliver(dummy_provider):
 
 @pytest.mark.asyncio
 async def test_deliver_with_coroutine(dummy_provider):
-    mock_handler = AsyncMock(return_value=False)
+    mock_handler = mock.AsyncMock(return_value=False)
     route = Route(dummy_provider, mock_handler)
     message = "test"
     result = await route.deliver(message)
@@ -192,7 +187,7 @@ async def test_deliver_with_coroutine(dummy_provider):
 
 @pytest.mark.asyncio
 async def test_deliver_with_message_translator(dummy_provider):
-    mock_handler = AsyncMock(return_value=True)
+    mock_handler = mock.AsyncMock(return_value=True)
     route = Route(dummy_provider, mock_handler)
     route.apply_message_translator = mock.Mock(return_value={"content": "whatever", "metadata": {}})
     result = await route.deliver("test")
