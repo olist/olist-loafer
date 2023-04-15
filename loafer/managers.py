@@ -1,12 +1,7 @@
 import asyncio
 import logging
 import os
-
-try:
-    from cached_property import cached_property
-except ImportError:
-    from functools import cached_property
-
+from functools import cached_property
 
 from .dispatchers import LoaferDispatcher
 from .exceptions import ConfigurationError

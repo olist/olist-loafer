@@ -3,11 +3,6 @@ from unittest import mock
 
 import pytest
 
-try:
-    from asynctest import CoroutineMock as AsyncMock
-except ImportError:
-    from unittest.mock import AsyncMock
-
 from loafer.ext.aws.handlers import SNSHandler, SQSHandler
 
 # SQSHandler
@@ -52,7 +47,7 @@ async def test_sqs_handler_publish_without_queue_name():
 @pytest.mark.asyncio
 async def test_sqs_handler_hadle():
     handler = SQSHandler("foobar")
-    handler.publish = AsyncMock()
+    handler.publish = mock.AsyncMock()
     await handler.handle("message", "metadata")
     assert handler.publish.called
     handler.publish.assert_called_once_with("message")
@@ -104,7 +99,7 @@ async def test_sns_handler_publish_without_topic():
 @pytest.mark.asyncio
 async def test_sns_handler_hadle():
     handler = SNSHandler("foobar")
-    handler.publish = AsyncMock()
+    handler.publish = mock.AsyncMock()
     await handler.handle("message", "metadata")
     assert handler.publish.called
     handler.publish.assert_called_once_with("message")

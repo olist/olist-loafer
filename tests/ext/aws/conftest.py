@@ -2,11 +2,6 @@ from unittest import mock
 
 import pytest
 
-try:
-    from asynctest import CoroutineMock as AsyncMock
-except ImportError:
-    from unittest.mock import AsyncMock
-
 # boto client methods mock
 
 
@@ -57,12 +52,12 @@ class ClientContextCreator:
 @pytest.fixture
 def boto_client_sqs(queue_url, sqs_message):
     mock_client = mock.Mock()
-    mock_client.get_queue_url = AsyncMock(return_value=queue_url)
-    mock_client.delete_message = AsyncMock()
-    mock_client.receive_message = AsyncMock(return_value=sqs_message)
-    mock_client.send_message = AsyncMock(return_value=sqs_send_message)
-    mock_client.change_message_visibility = AsyncMock()
-    mock_client.close = AsyncMock()
+    mock_client.get_queue_url = mock.AsyncMock(return_value=queue_url)
+    mock_client.delete_message = mock.AsyncMock()
+    mock_client.receive_message = mock.AsyncMock(return_value=sqs_message)
+    mock_client.send_message = mock.AsyncMock(return_value=sqs_send_message)
+    mock_client.change_message_visibility = mock.AsyncMock()
+    mock_client.close = mock.AsyncMock()
     return mock_client
 
 
@@ -76,8 +71,8 @@ def mock_boto_session_sqs(boto_client_sqs):
 @pytest.fixture
 def boto_client_sns(sns_publish, sns_list_topics):
     mock_client = mock.Mock()
-    mock_client.publish = AsyncMock(return_value=sns_publish)
-    mock_client.close = AsyncMock()
+    mock_client.publish = mock.AsyncMock(return_value=sns_publish)
+    mock_client.close = mock.AsyncMock()
     return mock_client
 
 
