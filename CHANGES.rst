@@ -2,6 +2,8 @@ UNRELEASED
 ------------------
 
 * chore: drop support for Python 3.7
+* chore: drop add_current_dir_to_syspath decorator
+* chore: remove import_callable function
 
 3.0.12 (2023-04-10)
 ------------------
