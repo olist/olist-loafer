@@ -123,10 +123,10 @@ async def test_message_processing_unsuccessfully(route):
 
 
 @pytest.mark.asyncio
-async def test_dispatch_tasks(route):
+async def test_dispatch_provider(route):
     route.provider.fetch_messages = mock.AsyncMock(return_value=["message"])
     dispatcher = LoaferDispatcher([route])
-    await dispatcher._dispatch_tasks()
+    await dispatcher._dispatch_provider(route, forever=False)
 
     assert route.provider.fetch_messages.called
     assert route.provider.confirm_message.called
@@ -137,7 +137,7 @@ async def test_dispatch_tasks(route):
 async def test_dispatch_without_tasks(route, event_loop):
     route.provider.fetch_messages = mock.AsyncMock(return_value=[])
     dispatcher = LoaferDispatcher([route])
-    await dispatcher._dispatch_tasks()
+    await dispatcher._dispatch_provider(route, forever=False)
 
     assert route.provider.fetch_messages.called
     assert route.provider.confirm_message.called is False
@@ -147,12 +147,10 @@ async def test_dispatch_without_tasks(route, event_loop):
 @pytest.mark.asyncio
 async def test_dispatch_providers(route, event_loop):
     dispatcher = LoaferDispatcher([route])
-    dispatcher._dispatch_tasks = mock.AsyncMock()
-    dispatcher.stop_providers = mock.Mock()
+    dispatcher._dispatch_provider = mock.AsyncMock()
     await dispatcher.dispatch_providers(forever=False)
 
-    assert dispatcher._dispatch_tasks.called
-    dispatcher._dispatch_tasks.assert_called_once_with()
+    dispatcher._dispatch_provider.assert_called_once_with(route, False)
 
 
 @pytest.mark.asyncio

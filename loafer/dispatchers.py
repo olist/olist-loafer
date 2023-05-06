@@ -45,32 +45,24 @@ class LoaferDispatcher:
             await provider.message_not_processed(message)
         return confirmation
 
-    async def _get_route_messages(self, route):
-        messages = await route.provider.fetch_messages()
-        return messages, route
-
-    async def _dispatch_tasks(self):
-        provider_messages_tasks = [self._get_route_messages(route) for route in self.routes]
-
-        process_messages_tasks = []
-        for provider_task in asyncio.as_completed(provider_messages_tasks):
-            messages, route = await provider_task
-
-            process_messages_tasks += [
+    async def _dispatch_provider(self, route, forever=True):
+        while True:
+            messages = await route.provider.fetch_messages()
+            process_messages_tasks = [
                 asyncio.create_task(self._process_message(message, route)) for message in messages
             ]
 
-        if not process_messages_tasks:
-            return
-
-        await asyncio.gather(*process_messages_tasks)
-
-    async def dispatch_providers(self, forever=True):
-        while True:
-            await self._dispatch_tasks()
+            await asyncio.gather(*process_messages_tasks)
 
             if not forever:
                 break
+
+    async def dispatch_providers(self, forever=True):
+        dispatch_provider_tasks = [
+            asyncio.create_task(self._dispatch_provider(route, forever)) for route in self.routes
+        ]
+
+        await asyncio.gather(*dispatch_provider_tasks)
 
     def stop(self):
         for route in self.routes:
