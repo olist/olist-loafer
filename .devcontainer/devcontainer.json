@@ -1,0 +1,36 @@
+{
+	"name": "loafer",
+	"image": "mcr.microsoft.com/devcontainers/python:0-3.11",
+	"features": {
+		"ghcr.io/devcontainers-contrib/features/poetry:2": {},
+		"ghcr.io/devcontainers-contrib/features/pre-commit:2": {}
+	},
+	"postCreateCommand": "poetry config virtualenvs.in-project true && poetry install",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python",
+				"ms-python.black-formatter",
+				"ms-python.flake8",
+				"ms-python.isort"
+			],
+			"settings": {
+				"[python]": {
+					"editor.defaultFormatter": "ms-python.black-formatter",
+					"editor.formatOnSave": true,
+					"editor.codeActionsOnSave": {
+						"source.organizeImports": true
+					}
+				},
+				"isort.args": [
+					"--profile",
+					"black"
+				],
+				"python.testing.pytestEnabled": true,
+				"python.testing.pytestArgs": [
+					"--no-cov"
+				]
+			}
+		}
+	}
+}
