@@ -4,6 +4,9 @@ UNRELEASED
 * chore: drop support for Python 3.7
 * chore: drop add_current_dir_to_syspath decorator
 * chore: remove import_callable function
+* chore: add devcontainer support
+* refactor: move version compatibility logic to compat.py
+* chore: initial support for Python 3.12
 
 3.0.12 (2023-04-10)
 ------------------
