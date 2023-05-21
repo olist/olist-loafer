@@ -2,7 +2,7 @@ import logging
 
 from .message_translators import AbstractMessageTranslator
 from .providers import AbstractProvider
-from .utils import run_in_loop_or_executor
+from .utils import ensure_coroutinefunction
 
 logger = logging.getLogger(__name__)
 
@@ -61,13 +61,13 @@ class Route:
     async def deliver(self, raw_message):
         message = self.apply_message_translator(raw_message)
         logger.info(f"delivering message route={self}, message={message!r}")
-        return await run_in_loop_or_executor(self.handler, message["content"], message["metadata"])
+        return await ensure_coroutinefunction(self.handler, message["content"], message["metadata"])
 
     async def error_handler(self, exc_info, message):
         logger.info(f"error handler process originated by message={message}")
 
         if self._error_handler is not None:
-            return await run_in_loop_or_executor(self._error_handler, exc_info, message)
+            return await ensure_coroutinefunction(self._error_handler, exc_info, message)
 
         return False
 
