@@ -7,6 +7,7 @@ UNRELEASED
 * chore: add devcontainer support
 * refactor: move version compatibility logic to compat.py
 * chore: initial support for Python 3.12
+* style: add EditorConfig configuration
 
 3.0.12 (2023-04-10)
 ------------------
