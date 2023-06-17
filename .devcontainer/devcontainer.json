@@ -9,10 +9,11 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"ms-python.python",
+				"EditorConfig.EditorConfig",
 				"ms-python.black-formatter",
 				"ms-python.flake8",
-				"ms-python.isort"
+				"ms-python.isort",
+				"ms-python.python"
 			],
 			"settings": {
 				"[python]": {
