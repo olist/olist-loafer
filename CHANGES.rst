@@ -1,4 +1,4 @@
-UNRELEASED
+4.0.0 (2023-07-10)
 ------------------
 
 * chore: drop support for Python 3.7
