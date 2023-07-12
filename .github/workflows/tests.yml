@@ -24,22 +24,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Poetry
-        run: pipx install poetry
+      - name: Setup Hatch
+        run: pipx install hatch
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-          cache: "poetry"
 
       - name: Install deps
         run: |
-          poetry install
+          hatch env create
 
       - name: Run linters
         run: |
-          SKIP=no-commit-to-branch poetry run pre-commit run -a -v
+          SKIP=no-commit-to-branch hatch run pre-commit run -a -v
 
       - name: Check dead fixtures
         run: |
@@ -56,18 +55,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Poetry
-        run: pipx install poetry
+      - name: Setup Hatch
+        run: pipx install hatch
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "poetry"
 
       - name: Install deps
         run: |
-          poetry install
+          hatch env create
 
       - name: Run tests
         run: |

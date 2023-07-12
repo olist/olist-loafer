@@ -1,15 +1,14 @@
 [build-system]
-requires = ["poetry_core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.poetry]
+[project]
 name = "olist-loafer"
 version = "4.0.0"
 description = "Asynchronous message dispatcher for concurrent tasks processing"
-license = "MIT"
-authors = ["Olist <developers@olist.com>"]
 readme = "README.md"
-repository = "https://github.com/olist/olist-loafer/"
+license = { file = "LICENSE" }
+authors = [{ name = "Olist", email = "developers@olist.com" }]
 keywords = ["asyncio", "message", "dispatcher", "tasks", "microservices"]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -25,21 +24,22 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Topic :: System :: Distributed Computing",
 ]
+requires-python = ">=3.8,<3.12"
+dependencies = ["aiobotocore[boto3]>=1.0.0,<3.0.0"]
 packages = [{ include = "loafer" }]
 
-[tool.poetry.urls]
-"Download" = "https://github.com/olist/olist-loafer/releases"
+[project.urls]
+Download = "https://github.com/olist/olist-loafer/releases"
+Repository = "https://github.com/olist/olist-loafer/"
 
-[tool.poetry.dependencies]
-python = ">=3.8,<3.12"
-aiobotocore = { version = ">=1.0.0,<3.0.0", extras = ["boto3"] }
-
-[tool.poetry.dev-dependencies]
-pre-commit = "*"
-pytest = "*"
-pytest-asyncio = "*"
-pytest-cov = "*"
-pytest-deadfixtures = "*"
+[tool.hatch.envs.default]
+dependencies = [
+    "pre-commit",
+    "pytest",
+    "pytest-asyncio",
+    "pytest-cov",
+    "pytest-deadfixtures",
+]
 
 [tool.black]
 line-length = 110
