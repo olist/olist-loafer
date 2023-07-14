@@ -2,10 +2,9 @@
 	"name": "loafer",
 	"image": "mcr.microsoft.com/devcontainers/python:0-3.11",
 	"features": {
-		"ghcr.io/devcontainers-contrib/features/poetry:2": {},
+		"ghcr.io/devcontainers-contrib/features/hatch:2": {},
 		"ghcr.io/devcontainers-contrib/features/pre-commit:2": {}
 	},
-	"postCreateCommand": "poetry config virtualenvs.in-project true && poetry install",
 	"customizations": {
 		"vscode": {
 			"extensions": [

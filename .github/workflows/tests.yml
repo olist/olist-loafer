@@ -20,34 +20,33 @@ jobs:
   lint:
     name: lint
     runs-on: ubuntu-latest
+    env:
+      HATCH_ENV: lint
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Poetry
-        run: pipx install poetry
+      - name: Setup Hatch
+        run: pipx install hatch
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-          cache: "poetry"
-
-      - name: Install deps
-        run: |
-          poetry install
 
       - name: Run linters
         run: |
-          SKIP=no-commit-to-branch poetry run pre-commit run -a -v
+          hatch env run lint
 
       - name: Check dead fixtures
         run: |
-          make check-fixtures
+          hatch env run check-fixtures
 
   test:
     name: Run tests
     runs-on: ubuntu-latest
+    env:
+      HATCH_ENV: test
     strategy:
       fail-fast: false
       matrix:
@@ -56,19 +55,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Poetry
-        run: pipx install poetry
+      - name: Setup Hatch
+        run: pipx install hatch
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "poetry"
-
-      - name: Install deps
-        run: |
-          poetry install
 
       - name: Run tests
         run: |
-          make test-cov
+          hatch env run test

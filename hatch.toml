@@ -1,0 +1,26 @@
+[envs.default]
+dependencies = [
+    "pre-commit",
+    "pytest",
+    "pytest-asyncio",
+    "pytest-cov",
+    "pytest-deadfixtures",
+]
+
+[tool.hatch.envs.lint]
+template = "lint"
+detached = true
+dependencies = ["pre-commit", "pytest-deadfixtures"]
+
+[tool.hatch.envs.lint.env-vars]
+SKIP = "no-commit-to-branch"
+
+[envs.lint.scripts]
+lint = "pre-commit run -a -v"
+check-fixtures = "pytest --dead-fixtures"
+
+[envs.test.scripts]
+test = "pytest -vv --cov=loafer tests"
+
+[[envs.test.matrix]]
+python = ["3.8", "3.9", "3.10", "3.11"]
