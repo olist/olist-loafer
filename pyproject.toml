@@ -26,20 +26,10 @@ classifiers = [
 ]
 requires-python = ">=3.8,<3.12"
 dependencies = ["aiobotocore[boto3]>=1.0.0,<3.0.0"]
-packages = [{ include = "loafer" }]
 
 [project.urls]
 Download = "https://github.com/olist/olist-loafer/releases"
 Repository = "https://github.com/olist/olist-loafer/"
-
-[tool.hatch.envs.default]
-dependencies = [
-    "pre-commit",
-    "pytest",
-    "pytest-asyncio",
-    "pytest-cov",
-    "pytest-deadfixtures",
-]
 
 [tool.black]
 line-length = 110

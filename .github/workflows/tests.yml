@@ -20,6 +20,8 @@ jobs:
   lint:
     name: lint
     runs-on: ubuntu-latest
+    env:
+      HATCH_ENV: lint
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -32,21 +34,19 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install deps
-        run: |
-          hatch env create
-
       - name: Run linters
         run: |
-          SKIP=no-commit-to-branch hatch run pre-commit run -a -v
+          hatch env run lint
 
       - name: Check dead fixtures
         run: |
-          make check-fixtures
+          hatch env run check-fixtures
 
   test:
     name: Run tests
     runs-on: ubuntu-latest
+    env:
+      HATCH_ENV: test
     strategy:
       fail-fast: false
       matrix:
@@ -63,10 +63,6 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install deps
-        run: |
-          hatch env create
-
       - name: Run tests
         run: |
-          make test-cov
+          hatch env run test
