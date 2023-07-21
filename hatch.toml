@@ -7,11 +7,6 @@ dependencies = [
     "pytest-deadfixtures",
 ]
 
-[envs.lint]
-template = "lint"
-detached = true
-dependencies = ["pre-commit", "pytest-deadfixtures"]
-
 [envs.lint.env-vars]
 SKIP = "no-commit-to-branch"
 
@@ -20,7 +15,7 @@ lint = "pre-commit run -a -v"
 check-fixtures = "pytest --dead-fixtures"
 
 [envs.test.scripts]
-test = "pytest -vv --cov=loafer tests"
+test = "pytest -vv --cov=loafer --cov-report=term-missing"
 
 [[envs.test.matrix]]
 python = ["3.8", "3.9", "3.10", "3.11"]
