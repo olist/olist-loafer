@@ -36,12 +36,11 @@ line-length = 110
 target-version = ["py38", "py39", "py310", "py311"]
 
 [tool.isort]
-line_length = 100
-multi_line_output = 3
+profile = "black"
+line_length = 110
 known_localfolder = ["loafer", "tests"]
 sections = ["FUTURE", "STDLIB", "THIRDPARTY", "LOCALFOLDER"]
 default_section = "THIRDPARTY"
-include_trailing_comma = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
