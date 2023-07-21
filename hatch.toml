@@ -7,12 +7,12 @@ dependencies = [
     "pytest-deadfixtures",
 ]
 
-[tool.hatch.envs.lint]
+[envs.lint]
 template = "lint"
 detached = true
 dependencies = ["pre-commit", "pytest-deadfixtures"]
 
-[tool.hatch.envs.lint.env-vars]
+[envs.lint.env-vars]
 SKIP = "no-commit-to-branch"
 
 [envs.lint.scripts]
