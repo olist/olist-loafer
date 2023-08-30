@@ -6,10 +6,6 @@ class ProviderRuntimeError(ProviderError):
     pass
 
 
-class ConfigurationError(Exception):
-    pass
-
-
 class LoaferException(Exception):
     pass
 
