@@ -1,3 +1,7 @@
+UNRELEASED
+----------
+* refactor: remove ConfigurationError exception
+
 4.0.0 (2023-07-10)
 ------------------
 

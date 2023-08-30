@@ -1,11 +1,8 @@
 import asyncio
 import logging
 import os
-from functools import cached_property
 
 from .dispatchers import LoaferDispatcher
-from .exceptions import ConfigurationError
-from .routes import Route
 from .runners import LoaferRunner
 
 logger = logging.getLogger(__name__)
@@ -20,13 +17,7 @@ class LoaferManager:
             self.runner = runner
 
         self.routes = routes
-
-    @cached_property
-    def dispatcher(self):
-        if not (self.routes and all(isinstance(r, Route) for r in self.routes)):
-            raise ConfigurationError(f"invalid routes to dispatch, routes={self.routes}")
-
-        return LoaferDispatcher(self.routes, max_jobs=self._concurrency_limit)
+        self.dispatcher = LoaferDispatcher(self.routes, max_jobs=self._concurrency_limit)
 
     def run(self, forever=True, debug=False):
         loop = self.runner.loop
