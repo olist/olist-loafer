@@ -1,6 +1,7 @@
 UNRELEASED
 ----------
 * refactor: remove ConfigurationError exception
+* refactor: remove concurrency limit param
 
 4.0.0 (2023-07-10)
 ------------------
