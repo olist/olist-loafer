@@ -9,9 +9,9 @@ logger = logging.getLogger(__name__)
 
 
 class LoaferManager:
-    def __init__(self, routes, runner=None, _max_threads=None):
+    def __init__(self, routes, runner=None):
         if runner is None:
-            self.runner = LoaferRunner(on_stop_callback=self.on_loop__stop, max_workers=_max_threads)
+            self.runner = LoaferRunner(on_stop_callback=self.on_loop__stop)
         else:
             self.runner = runner
 

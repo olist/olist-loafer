@@ -1,21 +1,15 @@
 import asyncio
 import logging
 import signal
-from concurrent.futures import CancelledError, ThreadPoolExecutor
+from concurrent.futures import CancelledError
 from contextlib import suppress
 
 logger = logging.getLogger(__name__)
 
 
 class LoaferRunner:
-    def __init__(self, max_workers=None, on_stop_callback=None):
+    def __init__(self, on_stop_callback=None):
         self._on_stop_callback = on_stop_callback
-
-        # XXX: See https://github.com/python/asyncio/issues/258
-        # The minimum value depends on the number of cores in the machine
-        # See https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor
-        self._executor = ThreadPoolExecutor(max_workers)
-        self.loop.set_default_executor(self._executor)
 
     @property
     def loop(self):
@@ -69,5 +63,3 @@ class LoaferRunner:
         logger.info("cancel schedulled operations ...")
         with suppress(CancelledError, RuntimeError):
             self._cancel_all_tasks()
-
-        self._executor.shutdown(wait=True)
