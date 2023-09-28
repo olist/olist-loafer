@@ -2,6 +2,7 @@ import asyncio
 import logging
 import sys
 
+from .compat import TaskGroup
 from .exceptions import DeleteMessage
 
 logger = logging.getLogger(__name__)
@@ -45,21 +46,18 @@ class LoaferDispatcher:
     async def _dispatch_provider(self, route, forever=True):
         while True:
             messages = await route.provider.fetch_messages()
-            process_messages_tasks = [
-                asyncio.create_task(self._process_message(message, route)) for message in messages
-            ]
 
-            await asyncio.gather(*process_messages_tasks)
+            async with TaskGroup() as message_tasks:
+                for message in messages:
+                    message_tasks.create_task(self._process_message(message, route))
 
             if not forever:
                 break
 
     async def dispatch_providers(self, forever=True):
-        dispatch_provider_tasks = [
-            asyncio.create_task(self._dispatch_provider(route, forever)) for route in self.routes
-        ]
-
-        await asyncio.gather(*dispatch_provider_tasks)
+        async with TaskGroup() as provider_tasks:
+            for route in self.routes:
+                provider_tasks.create_task(self._dispatch_provider(route, forever))
 
     def stop(self):
         for route in self.routes:

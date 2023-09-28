@@ -25,7 +25,10 @@ classifiers = [
     "Topic :: System :: Distributed Computing",
 ]
 requires-python = ">=3.8,<3.12"
-dependencies = ["aiobotocore>=2.0.0,<3.0.0"]
+dependencies = [
+    "aiobotocore>=2.0.0,<3.0.0",
+    "taskgroup; python_version < '3.11'",
+]
 
 [project.urls]
 Download = "https://github.com/olist/olist-loafer/releases"
