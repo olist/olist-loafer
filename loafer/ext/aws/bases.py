@@ -4,6 +4,8 @@ from aiobotocore.session import get_session
 
 logger = logging.getLogger(__name__)
 
+session = get_session()
+
 
 class _BotoClient:
     boto_service_name = None
@@ -21,7 +23,6 @@ class _BotoClient:
         }
 
     def get_client(self):
-        session = get_session()
         return session.create_client(self.boto_service_name, **self._client_options)
 
 
