@@ -3,6 +3,7 @@ UNRELEASED
 * refactor: remove ConfigurationError exception
 * refactor: remove concurrency limit param
 * refactor: remove max threads param
+* refactor: improve the task dispatching algorithm
 
 4.0.0 (2023-07-10)
 ------------------
