@@ -3,6 +3,7 @@ from unittest import mock
 
 import pytest
 
+from loafer import compat
 from loafer.dispatchers import LoaferDispatcher
 from loafer.exceptions import DeleteMessage
 from loafer.routes import Route
@@ -154,11 +155,28 @@ async def test_dispatch_providers(route, event_loop):
 
 
 @pytest.mark.asyncio
+@pytest.mark.skipif(compat.PY311 is False, reason="PY311 only")
 async def test_dispatch_providers_with_error(route, event_loop):
     route.provider.fetch_messages.side_effect = ValueError
     dispatcher = LoaferDispatcher([route])
-    with pytest.raises(ValueError):
+
+    with pytest.raises(BaseExceptionGroup) as exc_info:
         await dispatcher.dispatch_providers(forever=False)
+
+    assert isinstance(exc_info.value.exceptions[0], ValueError)
+
+
+@pytest.mark.asyncio
+@pytest.mark.skipif(compat.PY311 is True, reason="Before PY311")
+async def test_dispatch_providers_with_error_legacy(route, event_loop):
+    route.provider.fetch_messages.side_effect = ValueError
+    dispatcher = LoaferDispatcher([route])
+    from exceptiongroup import BaseExceptionGroup
+
+    with pytest.raises(BaseExceptionGroup) as exc_info:
+        await dispatcher.dispatch_providers(forever=False)
+
+    assert isinstance(exc_info.value.exceptions[0], ValueError)
 
 
 def test_dispatcher_stop(route):
