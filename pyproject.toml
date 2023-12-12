@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "olist-loafer"
-version = "4.0.0"
+version = "5.0.0"
 description = "Asynchronous message dispatcher for concurrent tasks processing"
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -42,6 +42,9 @@ line_length = 110
 known_localfolder = ["loafer", "tests"]
 sections = ["FUTURE", "STDLIB", "THIRDPARTY", "LOCALFOLDER"]
 default_section = "THIRDPARTY"
+
+[tool.hatch.build.targets.wheel]
+packages = ["loafer"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

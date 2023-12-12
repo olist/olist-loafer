@@ -1,9 +1,20 @@
-UNRELEASED
+5.0.0 (2023-12-12)
 ----------
+* chore: move to a PEP 621 compliant build system (hatch) (#44)
+* chore: add every supported version to black settings (#46)
+* chore: add toml extension to devcontainer
+* fix: hatch environment definitions were wrong
+* build: make github actions run only the tests for the right python version
+* chore: add github actions extension to dev container
+* fix: lint check-fixtures command wasn't working
+* style: use black isort profile
+* chore: remove boto3 dependency
+* chore: bump minimum aiobotocore version to 2.0.0
 * refactor: remove ConfigurationError exception
 * refactor: remove concurrency limit param
 * refactor: remove max threads param
-* chore: add support for Python 3.12
+* perf: instantiate a single aiobotocore session
+* chore: leave max python version open
 
 4.0.0 (2023-07-10)
 ------------------
