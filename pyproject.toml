@@ -44,7 +44,7 @@ sections = ["FUTURE", "STDLIB", "THIRDPARTY", "LOCALFOLDER"]
 default_section = "THIRDPARTY"
 
 [tool.hatch.build.targets.wheel]
-packages = ["loafer"]
+packages = ["src/loafer"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
