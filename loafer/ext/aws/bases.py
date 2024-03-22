@@ -1,14 +1,18 @@
 import logging
+from typing import ClassVar, Generic, Literal, TypeVar
 
 from aiobotocore.session import get_session
+from types_aiobotocore_sns import SNSClient
+from types_aiobotocore_sqs.client import SQSClient
 
 logger = logging.getLogger(__name__)
 
 session = get_session()
+TClient = TypeVar("TClient", SQSClient, SNSClient)
 
 
-class _BotoClient:
-    boto_service_name = None
+class _BotoClient(Generic[TClient]):
+    boto_service_name: ClassVar[Literal["sns", "sqs"]]
 
     def __init__(self, **client_options):
         self._client_options = {
@@ -22,18 +26,18 @@ class _BotoClient:
             "verify": client_options.get("verify", None),
         }
 
-    def get_client(self):
+    def get_client(self) -> TClient:
         return session.create_client(self.boto_service_name, **self._client_options)
 
 
-class BaseSQSClient(_BotoClient):
+class BaseSQSClient(_BotoClient[SQSClient]):
     boto_service_name = "sqs"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._cached_queue_urls = {}
 
-    async def get_queue_url(self, queue):
+    async def get_queue_url(self, queue: str) -> str:
         if queue and (queue.startswith("http://") or queue.startswith("https://")):
             name = queue.split("/")[-1]
             self._cached_queue_urls[name] = queue
@@ -47,10 +51,10 @@ class BaseSQSClient(_BotoClient):
         return self._cached_queue_urls[queue]
 
 
-class BaseSNSClient(_BotoClient):
+class BaseSNSClient(_BotoClient[SNSClient]):
     boto_service_name = "sns"
 
-    async def get_topic_arn(self, topic):
+    async def get_topic_arn(self, topic: str) -> str:
         arn_prefix = "arn:aws:sns:"
         if topic.startswith(arn_prefix):
             return topic

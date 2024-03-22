@@ -1,6 +1,8 @@
 import logging
+from collections.abc import Sequence
 
 import botocore.exceptions
+from types_aiobotocore_sqs.type_defs import MessageTypeDef
 
 from .bases import BaseSQSClient
 from loafer.exceptions import ProviderError
@@ -10,8 +12,8 @@ from loafer.utils import calculate_backoff_multiplier
 logger = logging.getLogger(__name__)
 
 
-class SQSProvider(AbstractProvider, BaseSQSClient):
-    def __init__(self, queue_name, options=None, **kwargs):
+class SQSProvider(AbstractProvider[MessageTypeDef], BaseSQSClient):
+    def __init__(self, queue_name: str, options=None, **kwargs):
         self.queue_name = queue_name
         self._options = options or {}
         self._backoff_factor = self._options.pop("BackoffFactor", None)
@@ -26,8 +28,8 @@ class SQSProvider(AbstractProvider, BaseSQSClient):
     def __str__(self):
         return f"<{type(self).__name__}: {self.queue_name}>"
 
-    async def confirm_message(self, message):
-        receipt = message["ReceiptHandle"]
+    async def confirm_message(self, message: MessageTypeDef):
+        receipt = message.get("ReceiptHandle")
         logger.info(f"confirm message (ack/deletion), receipt={receipt!r}")
 
         queue_url = await self.get_queue_url(self.queue_name)
@@ -40,11 +42,11 @@ class SQSProvider(AbstractProvider, BaseSQSClient):
 
             raise
 
-    async def message_not_processed(self, message):
-        receipt = message["ReceiptHandle"]
+    async def message_not_processed(self, message: MessageTypeDef):
+        receipt = message.get("ReceiptHandle")
         if self._backoff_factor:
             backoff_multiplier = calculate_backoff_multiplier(
-                int(message["Attributes"]["ApproximateReceiveCount"]),
+                int(message.get("Attributes", {})["ApproximateReceiveCount"]),
                 self._backoff_factor,
             )
 
@@ -65,16 +67,19 @@ class SQSProvider(AbstractProvider, BaseSQSClient):
                 if "InvalidParameterValue" not in str(exc):
                     raise
 
-    async def fetch_messages(self):
+    async def fetch_messages(self) -> Sequence[MessageTypeDef]:
         logger.debug(f"fetching messages on {self.queue_name}")
         try:
             queue_url = await self.get_queue_url(self.queue_name)
             async with self.get_client() as client:
                 response = await client.receive_message(QueueUrl=queue_url, **self._options)
-        except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as exc:
+        except (
+            botocore.exceptions.BotoCoreError,
+            botocore.exceptions.ClientError,
+        ) as exc:
             raise ProviderError(f"error fetching messages from queue={self.queue_name}: {str(exc)}") from exc
 
-        return response.get("Messages", [])
+        return response["Messages"]
 
     def stop(self):
         logger.info(f"stopping {self}")
