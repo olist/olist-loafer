@@ -1,17 +1,27 @@
 import asyncio
 import logging
 import sys
+from contextlib import suppress
+from typing import Any, Optional, Sequence
 
 from .exceptions import DeleteMessage
+from .routes import Route
 
 logger = logging.getLogger(__name__)
 
 
 class LoaferDispatcher:
-    def __init__(self, routes):
+    def __init__(
+        self,
+        routes: Sequence[Route],
+        max_concurrency: Optional[int] = None,
+    ) -> None:
         self.routes = routes
+        self.max_concurrency = (
+            max_concurrency if max_concurrency is not None else len(routes) * 10
+        )
 
-    async def dispatch_message(self, message, route):
+    async def dispatch_message(self, message: Any, route: Route) -> bool:
         logger.debug(f"dispatching message to route={route}")
         confirm_message = False
         if not message:
@@ -33,7 +43,7 @@ class LoaferDispatcher:
 
         return confirm_message
 
-    async def _process_message(self, message, route):
+    async def _process_message(self, message: Any, route: Route) -> bool:
         confirmation = await self.dispatch_message(message, route)
         provider = route.provider
         if confirmation:
@@ -42,27 +52,60 @@ class LoaferDispatcher:
             await provider.message_not_processed(message)
         return confirmation
 
-    async def _dispatch_provider(self, route, forever=True):
-        while True:
-            messages = await route.provider.fetch_messages()
-            process_messages_tasks = [
-                asyncio.create_task(self._process_message(message, route))
-                for message in messages
-            ]
-
-            await asyncio.gather(*process_messages_tasks)
-
-            if not forever:
-                break
-
-    async def dispatch_providers(self, forever=True):
-        dispatch_provider_tasks = [
-            asyncio.create_task(self._dispatch_provider(route, forever))
-            for route in self.routes
+    async def _fetch_messages(
+        self, processing_queue: asyncio.Queue, forever: bool = True
+    ) -> None:
+        routes = [route for route in self.routes]
+        tasks = [
+            asyncio.create_task(route.provider.fetch_messages()) for route in routes
         ]
 
-        await asyncio.gather(*dispatch_provider_tasks)
+        while routes or tasks:
+            await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
 
-    def stop(self):
+            new_routes = []
+            new_tasks = []
+            for task, route in zip(tasks, routes):
+                if task.done():
+                    for message in task.result():
+                        await processing_queue.put((message, route))
+
+                    if forever:
+                        new_routes.append(route)
+                        new_tasks.append(
+                            asyncio.create_task(route.provider.fetch_messages())
+                        )
+                else:
+                    new_routes.append(route)
+                    new_tasks.append(task)
+
+            routes = new_routes
+            tasks = new_tasks
+
+    async def _consume_messages(self, processing_queue: asyncio.Queue) -> None:
+        with suppress(asyncio.CancelledError):
+            while True:
+                message, route = await processing_queue.get()
+                asyncio.create_task(
+                    self._process_message(message, route)
+                ).add_done_callback(lambda _: processing_queue.task_done())
+
+    async def dispatch_providers(self, forever: bool = True) -> None:
+        processing_queue = asyncio.Queue(self.max_concurrency)
+        provider_task = asyncio.create_task(
+            self._fetch_messages(processing_queue, forever)
+        )
+        consumer_task = asyncio.create_task(self._consume_messages(processing_queue))
+
+        async def join():
+            await provider_task
+            await processing_queue.join()
+            consumer_task.cancel()
+
+        joining_task = asyncio.create_task(join())
+
+        await asyncio.gather(provider_task, consumer_task, joining_task)
+
+    def stop(self) -> None:
         for route in self.routes:
             route.stop()

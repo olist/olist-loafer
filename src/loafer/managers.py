@@ -9,14 +9,14 @@ logger = logging.getLogger(__name__)
 
 
 class LoaferManager:
-    def __init__(self, routes, runner=None):
+    def __init__(self, routes, runner=None, max_concurrency=None):
         if runner is None:
             self.runner = LoaferRunner(on_stop_callback=self.on_loop__stop)
         else:
             self.runner = runner
 
         self.routes = routes
-        self.dispatcher = LoaferDispatcher(self.routes)
+        self.dispatcher = LoaferDispatcher(self.routes, max_concurrency)
 
     def run(self, forever=True, debug=False):
         loop = self.runner.loop
