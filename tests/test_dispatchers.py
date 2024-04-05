@@ -2,9 +2,14 @@ import asyncio
 from unittest import mock
 
 import pytest
+
+from loafer.compat import PY311
 from loafer.dispatchers import LoaferDispatcher
 from loafer.exceptions import DeleteMessage
 from loafer.routes import Route
+
+if not PY311:
+    from exceptiongroup import ExceptionGroup
 
 
 def create_mock_route(messages):
@@ -128,8 +133,10 @@ async def test_dispatch_providers_with_error(route):
     route.provider.fetch_messages.side_effect = ValueError
     dispatcher = LoaferDispatcher([route])
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ExceptionGroup) as exc_info:
         await dispatcher.dispatch_providers(forever=False)
+
+    assert exc_info.value.subgroup(ValueError) is not None
 
 
 def test_dispatcher_stop(route):
