@@ -1,9 +1,10 @@
 import asyncio
 import logging
 import sys
-from contextlib import suppress
+from functools import partial
 from typing import Any, Optional, Sequence
 
+from .compat import TaskGroup
 from .exceptions import DeleteMessage
 from .routes import Route
 
@@ -17,9 +18,7 @@ class LoaferDispatcher:
         max_concurrency: Optional[int] = None,
     ) -> None:
         self.routes = routes
-        self.max_concurrency = (
-            max_concurrency if max_concurrency is not None else len(routes) * 10
-        )
+        self.max_concurrency = max_concurrency if max_concurrency is not None else len(routes) * 10
 
     async def dispatch_message(self, message: Any, route: Route) -> bool:
         logger.debug(f"dispatching message to route={route}")
@@ -53,12 +52,13 @@ class LoaferDispatcher:
         return confirmation
 
     async def _fetch_messages(
-        self, processing_queue: asyncio.Queue, forever: bool = True
+        self,
+        processing_queue: asyncio.Queue,
+        tg: TaskGroup,
+        forever: bool = True,
     ) -> None:
         routes = [route for route in self.routes]
-        tasks = [
-            asyncio.create_task(route.provider.fetch_messages()) for route in routes
-        ]
+        tasks = [tg.create_task(route.provider.fetch_messages()) for route in routes]
 
         while routes or tasks:
             await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
@@ -67,14 +67,15 @@ class LoaferDispatcher:
             new_tasks = []
             for task, route in zip(tasks, routes):
                 if task.done():
+                    if task.exception():
+                        raise task.exception()
+
                     for message in task.result():
                         await processing_queue.put((message, route))
 
                     if forever:
                         new_routes.append(route)
-                        new_tasks.append(
-                            asyncio.create_task(route.provider.fetch_messages())
-                        )
+                        new_tasks.append(tg.create_task(route.provider.fetch_messages()))
                 else:
                     new_routes.append(route)
                     new_tasks.append(task)
@@ -82,29 +83,31 @@ class LoaferDispatcher:
             routes = new_routes
             tasks = new_tasks
 
-    async def _consume_messages(self, processing_queue: asyncio.Queue) -> None:
-        with suppress(asyncio.CancelledError):
-            while True:
-                message, route = await processing_queue.get()
-                asyncio.create_task(
-                    self._process_message(message, route)
-                ).add_done_callback(lambda _: processing_queue.task_done())
+    def _mark_task_done(self, queue: asyncio.Queue, *args, **kwargs):
+        queue.task_done()
+
+    async def _consume_messages(self, processing_queue: asyncio.Queue, tg: TaskGroup) -> None:
+        mark_task_done = partial(self._mark_task_done, processing_queue)
+
+        while True:
+            message, route = await processing_queue.get()
+
+            task = tg.create_task(self._process_message(message, route))
+            task.add_done_callback(mark_task_done)
 
     async def dispatch_providers(self, forever: bool = True) -> None:
         processing_queue = asyncio.Queue(self.max_concurrency)
-        provider_task = asyncio.create_task(
-            self._fetch_messages(processing_queue, forever)
-        )
-        consumer_task = asyncio.create_task(self._consume_messages(processing_queue))
 
-        async def join():
-            await provider_task
-            await processing_queue.join()
-            consumer_task.cancel()
+        async with TaskGroup() as tg:
+            provider_task = tg.create_task(self._fetch_messages(processing_queue, tg, forever))
+            consumer_task = tg.create_task(self._consume_messages(processing_queue, tg))
 
-        joining_task = asyncio.create_task(join())
+            async def join():
+                await provider_task
+                await processing_queue.join()
+                consumer_task.cancel()
 
-        await asyncio.gather(provider_task, consumer_task, joining_task)
+            tg.create_task(join())
 
     def stop(self) -> None:
         for route in self.routes:
