@@ -46,7 +46,8 @@ class LoaferDispatcher:
         while True:
             messages = await route.provider.fetch_messages()
             process_messages_tasks = [
-                asyncio.create_task(self._process_message(message, route)) for message in messages
+                asyncio.create_task(self._process_message(message, route))
+                for message in messages
             ]
 
             await asyncio.gather(*process_messages_tasks)
@@ -56,7 +57,8 @@ class LoaferDispatcher:
 
     async def dispatch_providers(self, forever=True):
         dispatch_provider_tasks = [
-            asyncio.create_task(self._dispatch_provider(route, forever)) for route in self.routes
+            asyncio.create_task(self._dispatch_provider(route, forever))
+            for route in self.routes
         ]
 
         await asyncio.gather(*dispatch_provider_tasks)
