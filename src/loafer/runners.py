@@ -15,7 +15,7 @@ class LoaferRunner:
     def loop(self):
         return asyncio.get_event_loop()
 
-    def start(self, debug=False):
+    def start(self, debug=False):  # noqa: FBT002
         if debug:
             self.loop.set_debug(enabled=debug)
 
@@ -27,10 +27,10 @@ class LoaferRunner:
         finally:
             self.stop()
             self.loop.close()
-            logger.debug(f"loop.is_running={self.loop.is_running()}")
-            logger.debug(f"loop.is_closed={self.loop.is_closed()}")
+            logger.debug("loop.is_running=%s", self.loop.is_running())
+            logger.debug("loop.is_closed=%s", self.loop.is_closed())
 
-    def prepare_stop(self, *args):
+    def prepare_stop(self, *args):  # noqa: ARG002
         if self.loop.is_running():
             # signals loop.run_forever to exit in the next iteration
             self.loop.stop()
@@ -55,7 +55,7 @@ class LoaferRunner:
                     }
                 )
 
-    def stop(self, *args, **kwargs):
+    def stop(self):
         logger.info("stopping Loafer ...")
         if callable(self._on_stop_callback):
             self._on_stop_callback()

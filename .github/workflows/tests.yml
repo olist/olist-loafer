@@ -17,52 +17,27 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
-    name: lint
+  tests:
+    name: Run tests on ${{ matrix.python-version }}
     runs-on: ubuntu-latest
-    env:
-      HATCH_ENV: lint
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Setup Hatch
-        run: pipx install hatch
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.12"
-
-      - name: Run linters
-        run: |
-          hatch env run lint
-
-      - name: Check dead fixtures
-        run: |
-          hatch env run check-fixtures
-
-  test:
-    name: Run tests
-    runs-on: ubuntu-latest
-    env:
-      HATCH_ENV: test
     strategy:
       fail-fast: false
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
 
       - name: Setup Hatch
         run: pipx install hatch
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
+      - name: Run static analysis
+        run: hatch fmt --check
 
       - name: Run tests
         run: |
-          hatch env run -i py=${{ matrix.python-version }} test
+          hatch env run -e all -i py=${{ matrix.python-version }} test

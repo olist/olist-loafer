@@ -12,19 +12,20 @@ class Route:
         self.name = name
 
         if not isinstance(provider, AbstractProvider):
-            raise TypeError(f"invalid provider instance: {provider!r}")
+            msg = f"invalid provider instance: {provider!r}"
+            raise TypeError(msg)
 
         self.provider = provider
 
-        if message_translator:
-            if not isinstance(message_translator, AbstractMessageTranslator):
-                raise TypeError(f"invalid message translator instance: {message_translator!r}")
+        if message_translator and not isinstance(message_translator, AbstractMessageTranslator):
+            msg = f"invalid message translator instance: {message_translator!r}"
+            raise TypeError(msg)
 
         self.message_translator = message_translator
 
-        if error_handler:
-            if not callable(error_handler):
-                raise TypeError(f"error_handler must be a callable object: {error_handler!r}")
+        if error_handler and not callable(error_handler):
+            msg = f"error_handler must be a callable object: {error_handler!r}"
+            raise TypeError(msg)
 
         self._error_handler = error_handler
 
@@ -36,14 +37,11 @@ class Route:
             self._handler_instance = handler
 
         if not self.handler:
-            raise ValueError(
-                f"handler must be a callable object or implement `handle` method: {self.handler!r}"
-            )
+            msg = f"handler must be a callable object or implement `handle` method: {self.handler!r}"
+            raise ValueError(msg)
 
     def __str__(self):
-        return "<{}(name={} provider={!r} handler={!r})>".format(
-            type(self).__name__, self.name, self.provider, self.handler
-        )
+        return f"<{type(self).__name__}(name={self.name} provider={self.provider!r} handler={self.handler!r})>"
 
     def apply_message_translator(self, message):
         processed_message = {"content": message, "metadata": {}}
@@ -54,17 +52,18 @@ class Route:
         processed_message["metadata"].update(translated.get("metadata", {}))
         processed_message["content"] = translated["content"]
         if not processed_message["content"]:
-            raise ValueError(f"{self.message_translator} failed to translate message={message}")
+            msg = f"{self.message_translator} failed to translate message={message}"
+            raise ValueError(msg)
 
         return processed_message
 
     async def deliver(self, raw_message):
         message = self.apply_message_translator(raw_message)
-        logger.info(f"delivering message route={self}, message={message!r}")
+        logger.info("delivering message route=%s, message=%r", self, message)
         return await ensure_coroutinefunction(self.handler, message["content"], message["metadata"])
 
     async def error_handler(self, exc_info, message):
-        logger.info(f"error handler process originated by message={message}")
+        logger.info("error handler process originated by message=%s", message)
 
         if self._error_handler is not None:
             return await ensure_coroutinefunction(self._error_handler, exc_info, message)
@@ -72,7 +71,7 @@ class Route:
         return False
 
     def stop(self):
-        logger.info(f"stopping route {self}")
+        logger.info("stopping route %s", self)
         self.provider.stop()
         # only for class-based handlers
         if hasattr(self._handler_instance, "stop"):

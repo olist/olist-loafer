@@ -52,10 +52,12 @@ def test_apply_message_translator_error(dummy_provider):
     translator = StringMessageTranslator()
     translator.translate = mock.Mock(return_value={"content": "", "metadata": {}})
     route = Route(dummy_provider, mock.Mock(), message_translator=translator)
-    with pytest.raises(ValueError):
+
+    with pytest.raises(ValueError, match="failed to translate"):
         route.apply_message_translator("message")
-        assert translator.translate.called
-        translator.translate.assert_called_once_with("message")
+
+    assert translator.translate.called
+    translator.translate.assert_called_once_with("message")
 
 
 @pytest.mark.asyncio
@@ -106,28 +108,28 @@ async def test_error_handler_coroutine(dummy_provider):
 
 @pytest.mark.asyncio
 async def test_handler_class_based(dummy_provider):
-    class handler:
+    class Handler:
         async def handle(self, *args, **kwargs):
             pass
 
-    handler = handler()
+    handler = Handler()
     route = Route(dummy_provider, handler=handler)
     assert route.handler == handler.handle
 
 
 @pytest.mark.asyncio
 async def test_handler_class_based_invalid(dummy_provider):
-    class handler:
+    class Handler:
         pass
 
-    handler = handler()
-    with pytest.raises(ValueError):
+    handler = Handler()
+    with pytest.raises(ValueError, match="handler must be a callable object"):
         Route(dummy_provider, handler=handler)
 
 
 @pytest.mark.asyncio
 async def test_handler_invalid(dummy_provider):
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="handler must be a callable object"):
         Route(dummy_provider, "invalid-handler")
 
 
@@ -140,12 +142,12 @@ def test_route_stop(dummy_provider):
 
 
 def test_route_stop_with_handler_stop(dummy_provider):
-    class handler:
+    class Handler:
         def handle(self, *args):
             pass
 
     dummy_provider.stop = mock.Mock()
-    handler = handler()
+    handler = Handler()
     handler.stop = mock.Mock()
     route = Route(dummy_provider, handler)
     route.stop()

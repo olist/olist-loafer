@@ -63,13 +63,11 @@ def boto_client_sqs(queue_url, sqs_message):
 
 @pytest.fixture
 def mock_boto_session_sqs(boto_client_sqs):
-    return mock.patch(
-        "loafer.ext.aws.bases.session.create_client", return_value=ClientContextCreator(boto_client_sqs)
-    )
+    return mock.patch("loafer.ext.aws.bases.session.create_client", return_value=ClientContextCreator(boto_client_sqs))
 
 
 @pytest.fixture
-def boto_client_sns(sns_publish, sns_list_topics):
+def boto_client_sns(sns_publish):
     mock_client = mock.Mock()
     mock_client.publish = mock.AsyncMock(return_value=sns_publish)
     mock_client.close = mock.AsyncMock()
@@ -78,6 +76,4 @@ def boto_client_sns(sns_publish, sns_list_topics):
 
 @pytest.fixture
 def mock_boto_session_sns(boto_client_sns):
-    return mock.patch(
-        "loafer.ext.aws.bases.session.create_client", return_value=ClientContextCreator(boto_client_sns)
-    )
+    return mock.patch("loafer.ext.aws.bases.session.create_client", return_value=ClientContextCreator(boto_client_sns))

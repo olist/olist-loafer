@@ -6,9 +6,9 @@ class ProviderRuntimeError(ProviderError):
     pass
 
 
-class LoaferException(Exception):
+class LoaferError(Exception):
     pass
 
 
-class DeleteMessage(LoaferException):
+class DeleteMessage(LoaferError):  # noqa: N818
     pass

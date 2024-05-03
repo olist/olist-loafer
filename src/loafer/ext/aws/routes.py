@@ -1,4 +1,5 @@
-from ...routes import Route
+from loafer.routes import Route
+
 from .message_translators import SNSMessageTranslator, SQSMessageTranslator
 from .providers import SQSProvider
 

@@ -1,11 +1,13 @@
 import logging
+from http import HTTPStatus
 
 import botocore.exceptions
 
-from .bases import BaseSQSClient
 from loafer.exceptions import ProviderError
 from loafer.providers import AbstractProvider
 from loafer.utils import calculate_backoff_multiplier
+
+from .bases import BaseSQSClient
 
 logger = logging.getLogger(__name__)
 
@@ -28,14 +30,14 @@ class SQSProvider(AbstractProvider, BaseSQSClient):
 
     async def confirm_message(self, message):
         receipt = message["ReceiptHandle"]
-        logger.info(f"confirm message (ack/deletion), receipt={receipt!r}")
+        logger.info("confirm message (ack/deletion), receipt=%r", receipt)
 
         queue_url = await self.get_queue_url(self.queue_name)
         try:
             async with self.get_client() as client:
                 return await client.delete_message(QueueUrl=queue_url, ReceiptHandle=receipt)
         except botocore.exceptions.ClientError as exc:
-            if exc.response["ResponseMetadata"]["HTTPStatusCode"] == 404:
+            if exc.response["ResponseMetadata"]["HTTPStatusCode"] == HTTPStatus.NOT_FOUND:
                 return True
 
             raise
@@ -50,8 +52,7 @@ class SQSProvider(AbstractProvider, BaseSQSClient):
 
             custom_visibility_timeout = round(backoff_multiplier * self._options.get("VisibilityTimeout", 30))
             logger.info(
-                f"message not processed, receipt={receipt!r}, "
-                f"custom_visibility_timeout={custom_visibility_timeout!r}"
+                "message not processed, receipt=%r, custom_visibility_timeout=%r", receipt, custom_visibility_timeout
             )
             queue_url = await self.get_queue_url(self.queue_name)
             try:
@@ -64,18 +65,20 @@ class SQSProvider(AbstractProvider, BaseSQSClient):
             except botocore.exceptions.ClientError as exc:
                 if "InvalidParameterValue" not in str(exc):
                     raise
+        return None
 
     async def fetch_messages(self):
-        logger.debug(f"fetching messages on {self.queue_name}")
+        logger.debug("fetching messages on %s", self.queue_name)
         try:
             queue_url = await self.get_queue_url(self.queue_name)
             async with self.get_client() as client:
                 response = await client.receive_message(QueueUrl=queue_url, **self._options)
         except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as exc:
-            raise ProviderError(f"error fetching messages from queue={self.queue_name}: {str(exc)}") from exc
+            msg = f"error fetching messages from queue={self.queue_name}: {exc!s}"
+            raise ProviderError(msg) from exc
 
         return response.get("Messages", [])
 
     def stop(self):
-        logger.info(f"stopping {self}")
+        logger.info("stopping %s", self)
         return super().stop()

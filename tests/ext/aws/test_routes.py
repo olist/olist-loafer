@@ -24,8 +24,8 @@ def test_sqs_route_keep_name(dummy_handler):
 
 def test_sqs_route_provider_options(dummy_handler):
     route = SQSRoute("what", {"use_ssl": False}, handler=dummy_handler, name="foobar")
-    assert "use_ssl" in route.provider._client_options
-    assert route.provider._client_options["use_ssl"] is False
+    assert "use_ssl" in route.provider._client_options  # noqa: SLF001
+    assert route.provider._client_options["use_ssl"] is False  # noqa: SLF001
 
 
 def test_sns_queue_route(dummy_handler):
@@ -48,8 +48,6 @@ def test_sns_queue_route_keep_name(dummy_handler):
 
 
 def test_sns_queue_route_provider_options(dummy_handler):
-    route = SNSQueueRoute(
-        "what", provider_options={"region_name": "sa-east-1"}, handler=dummy_handler, name="foobar"
-    )
-    assert "region_name" in route.provider._client_options
-    assert route.provider._client_options["region_name"] == "sa-east-1"
+    route = SNSQueueRoute("what", provider_options={"region_name": "sa-east-1"}, handler=dummy_handler, name="foobar")
+    assert "region_name" in route.provider._client_options  # noqa: SLF001
+    assert route.provider._client_options["region_name"] == "sa-east-1"  # noqa: SLF001
