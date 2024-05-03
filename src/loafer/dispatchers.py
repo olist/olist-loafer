@@ -17,7 +17,7 @@ class LoaferDispatcher:
         max_concurrency: Optional[int] = None,
     ) -> None:
         self.routes = routes
-        self.max_concurrency = max_concurrency if max_concurrency is not None else len(routes) * 10
+        self.max_concurrency = max_concurrency if max_concurrency is not None else max(len(routes), 5)
 
     async def dispatch_message(self, message: Any, route: Route) -> bool:
         logger.debug(f"dispatching message to route={route}")
