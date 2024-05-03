@@ -1,7 +1,6 @@
 import asyncio
 import logging
 import sys
-from functools import partial
 from typing import Any, Optional, Sequence
 
 from .compat import TaskGroup
@@ -83,29 +82,29 @@ class LoaferDispatcher:
             routes = new_routes
             tasks = new_tasks
 
-    def _mark_task_done(self, queue: asyncio.Queue, *args, **kwargs):
-        queue.task_done()
-
-    async def _consume_messages(self, processing_queue: asyncio.Queue, tg: TaskGroup) -> None:
-        mark_task_done = partial(self._mark_task_done, processing_queue)
-
+    async def _consume_messages(self, processing_queue: asyncio.Queue) -> None:
         while True:
             message, route = await processing_queue.get()
 
-            task = tg.create_task(self._process_message(message, route))
-            task.add_done_callback(mark_task_done)
+            await self._process_message(message, route)
+            processing_queue.task_done()
 
     async def dispatch_providers(self, forever: bool = True) -> None:
         processing_queue = asyncio.Queue(self.max_concurrency)
 
         async with TaskGroup() as tg:
             provider_task = tg.create_task(self._fetch_messages(processing_queue, tg, forever))
-            consumer_task = tg.create_task(self._consume_messages(processing_queue, tg))
+
+            consumer_tasks = [
+                tg.create_task(self._consume_messages(processing_queue)) for _ in range(self.max_concurrency)
+            ]
 
             async def join():
                 await provider_task
                 await processing_queue.join()
-                consumer_task.cancel()
+
+                for consumer_task in consumer_tasks:
+                    consumer_task.cancel()
 
             tg.create_task(join())
 
