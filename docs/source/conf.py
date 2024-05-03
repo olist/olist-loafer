@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-#
+#  # noqa: INP001
 # Loafer documentation build configuration file, created by
 # sphinx-quickstart on Tue Apr 12 03:26:33 2016.
 #
@@ -45,7 +44,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "Loafer"
-copyright = "2016-2019, George Y. Kussumoto"
+copyright = "2016-2019, George Y. Kussumoto"  # noqa: A001
 author = "George Y. Kussumoto"
 
 # The version info for the project you're documenting, acts as replacement for

@@ -40,7 +40,7 @@ async def test_sqs_handler_publish_without_encoder(mock_boto_session_sqs, boto_c
 @pytest.mark.asyncio
 async def test_sqs_handler_publish_without_queue_name():
     handler = SQSHandler()
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="missing queue_name attribute"):
         await handler.publish("wrong")
 
 
@@ -92,7 +92,7 @@ async def test_sns_handler_publisher_without_encoder(mock_boto_session_sns, boto
 @pytest.mark.asyncio
 async def test_sns_handler_publish_without_topic():
     handler = SNSHandler()
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="missing topic attribute"):
         await handler.publish("wrong")
 
 

@@ -19,7 +19,6 @@ class AbstractProvider(abc.ABC):
 
     async def message_not_processed(self, message):
         """Perform actions when a message was not processed."""
-        pass
 
     def stop(self):
         """Stop the provider.
@@ -27,4 +26,3 @@ class AbstractProvider(abc.ABC):
         If needed, the provider should perform clean-up actions.
         This method is called whenever we need to shutdown the provider.
         """
-        pass

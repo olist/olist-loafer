@@ -18,5 +18,5 @@ class AbstractMessageTranslator(abc.ABC):
 
 class StringMessageTranslator(AbstractMessageTranslator):
     def translate(self, message):
-        logger.debug(f"{type(self).__name__!r} will translate {message!r}")
+        logger.debug("%r will translate %r", type(self).__name__, message)
         return {"content": str(message), "metadata": {}}

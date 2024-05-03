@@ -15,4 +15,4 @@ A description of all the exceptions:
 * ``DeleteMessage``: if any :doc:`handlers` raises this exception, the message will
   be rejected and acknowledged (the message will be deleted).
 
-* ``LoaferException``: the base exception for ``DeleteMessage``.
+* ``LoaferError``: the base exception for ``DeleteMessage``.

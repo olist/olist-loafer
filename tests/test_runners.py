@@ -59,8 +59,7 @@ def test_runner_prepare_stop_already_stopped(get_loop_mock):
     assert loop.stop.called is False
 
 
-@mock.patch("loafer.runners.asyncio.get_event_loop")
-def test_runner_stop_with_callback(loop_mock):
+def test_runner_stop_with_callback():
     callback = mock.Mock()
     runner = LoaferRunner(on_stop_callback=callback)
 
@@ -71,7 +70,7 @@ def test_runner_stop_with_callback(loop_mock):
 
 def test_runner_stop_dont_raise_cancelled_error():
     async def some_coro():
-        raise asyncio.CancelledError()
+        raise asyncio.CancelledError
 
     runner = LoaferRunner()
     loop = runner.loop

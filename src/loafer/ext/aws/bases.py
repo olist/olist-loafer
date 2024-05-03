@@ -34,7 +34,7 @@ class BaseSQSClient(_BotoClient):
         self._cached_queue_urls = {}
 
     async def get_queue_url(self, queue):
-        if queue and (queue.startswith("http://") or queue.startswith("https://")):
+        if queue and (queue.startswith(("http://", "https://"))):
             name = queue.split("/")[-1]
             self._cached_queue_urls[name] = queue
             queue = name

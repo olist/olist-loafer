@@ -18,7 +18,7 @@ class LoaferManager:
         self.routes = routes
         self.dispatcher = LoaferDispatcher(self.routes, max_concurrency)
 
-    def run(self, forever=True, debug=False):
+    def run(self, forever=True, debug=False):  # noqa: FBT002
         loop = self.runner.loop
         self._future = asyncio.ensure_future(
             self.dispatcher.dispatch_providers(forever=forever),
@@ -44,10 +44,12 @@ class LoaferManager:
         exc = future.exception()
         # Unhandled errors crashes the event loop execution
         if isinstance(exc, BaseException):
-            logger.critical(f"fatal error caught: {exc!r}")
+            logger.critical("fatal error caught: %r", exc)
             self.runner.prepare_stop()
+            return None
+        return None
 
-    def on_loop__stop(self, *args, **kwargs):
+    def on_loop__stop(self):
         logger.info("cancel dispatcher operations ...")
 
         if hasattr(self, "_future"):

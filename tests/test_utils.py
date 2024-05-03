@@ -4,7 +4,7 @@ from loafer.utils import calculate_backoff_multiplier
 
 
 @pytest.mark.parametrize(
-    "number_of_tries, backoff_factor, expected",
+    ("number_of_tries", "backoff_factor", "expected"),
     [
         (0, 1.5, 1),
         (1, 1.5, 1.5),

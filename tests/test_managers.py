@@ -59,8 +59,8 @@ def test_on_future_errors_cancelled():
 def test_on_loop__stop():
     manager = LoaferManager(routes=[])
     manager.dispatcher = mock.Mock()
-    manager._future = mock.Mock()
+    manager._future = mock.Mock()  # noqa: SLF001
     manager.on_loop__stop()
 
     assert manager.dispatcher.stop.called
-    assert manager._future.cancel.called
+    assert manager._future.cancel.called  # noqa: SLF001

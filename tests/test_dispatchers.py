@@ -19,16 +19,13 @@ def create_mock_route(messages):
         message_not_processed=mock.AsyncMock(),
     )
 
-    message_translator = mock.Mock(
-        translate=mock.Mock(side_effect=[{"content": message} for message in messages])
-    )
-    route = mock.AsyncMock(
+    message_translator = mock.Mock(translate=mock.Mock(side_effect=[{"content": message} for message in messages]))
+    return mock.AsyncMock(
         provider=provider,
         handler=mock.AsyncMock(),
         message_translator=message_translator,
         spec=Route,
     )
-    return route
 
 
 @pytest.fixture
