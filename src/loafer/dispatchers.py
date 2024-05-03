@@ -106,6 +106,8 @@ class LoaferDispatcher:
                 for consumer_task in consumer_tasks:
                     consumer_task.cancel()
 
+                await asyncio.gather(*consumer_tasks, return_exceptions=True)
+
             tg.create_task(join())
 
     def stop(self) -> None:
