@@ -1,22 +1,33 @@
+from __future__ import annotations
+
 import asyncio
 import logging
 import os
+from typing import TYPE_CHECKING, Sequence
 
 from .dispatchers import LoaferDispatcher
 from .runners import LoaferRunner
+
+if TYPE_CHECKING:
+    from .routes import Route
 
 logger = logging.getLogger(__name__)
 
 
 class LoaferManager:
-    def __init__(self, routes, runner=None, max_concurrency=None):
+    def __init__(
+        self,
+        routes: Sequence[Route],
+        runner: LoaferRunner | None = None,
+        queue_size: int | None = None,
+        workers: int | None = None,
+    ):
         if runner is None:
             self.runner = LoaferRunner(on_stop_callback=self.on_loop__stop)
         else:
             self.runner = runner
 
-        self.routes = routes
-        self.dispatcher = LoaferDispatcher(self.routes, max_concurrency)
+        self.dispatcher = LoaferDispatcher(routes, queue_size, workers)
 
     def run(self, forever=True, debug=False):  # noqa: FBT002
         loop = self.runner.loop
