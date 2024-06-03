@@ -18,10 +18,12 @@ class LoaferDispatcher:
     def __init__(
         self,
         routes: Sequence[Route],
-        max_concurrency: int | None = None,
+        queue_size: int | None = None,
+        workers: int | None = None,
     ) -> None:
         self.routes = routes
-        self.max_concurrency = max_concurrency if max_concurrency is not None else max(len(routes), 5)
+        self.queue_size = queue_size if queue_size is not None else len(routes) * 10
+        self.workers = workers if workers is not None else max(len(routes), 5)
 
     async def dispatch_message(self, message: Any, route: Route) -> bool:
         logger.debug("dispatching message to route=%s", route)
@@ -94,14 +96,11 @@ class LoaferDispatcher:
             processing_queue.task_done()
 
     async def dispatch_providers(self, forever: bool = True) -> None:  # noqa: FBT001, FBT002
-        processing_queue = asyncio.Queue(self.max_concurrency)
+        processing_queue = asyncio.Queue(self.queue_size)
 
         async with TaskGroup() as tg:
             provider_task = tg.create_task(self._fetch_messages(processing_queue, tg, forever))
-
-            consumer_tasks = [
-                tg.create_task(self._consume_messages(processing_queue)) for _ in range(self.max_concurrency)
-            ]
+            consumer_tasks = [tg.create_task(self._consume_messages(processing_queue)) for _ in range(self.workers)]
 
             async def join():
                 await provider_task
