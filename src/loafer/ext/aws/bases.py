@@ -12,14 +12,14 @@ class _BotoClient:
 
     def __init__(self, **client_options):
         self._client_options = {
-            "api_version": client_options.get("api_version", None),
-            "aws_access_key_id": client_options.get("aws_access_key_id", None),
-            "aws_secret_access_key": client_options.get("aws_secret_access_key", None),
-            "aws_session_token": client_options.get("aws_session_token", None),
-            "endpoint_url": client_options.get("endpoint_url", None),
-            "region_name": client_options.get("region_name", None),
+            "api_version": client_options.get("api_version"),
+            "aws_access_key_id": client_options.get("aws_access_key_id"),
+            "aws_secret_access_key": client_options.get("aws_secret_access_key"),
+            "aws_session_token": client_options.get("aws_session_token"),
+            "endpoint_url": client_options.get("endpoint_url"),
+            "region_name": client_options.get("region_name"),
             "use_ssl": client_options.get("use_ssl", True),
-            "verify": client_options.get("verify", None),
+            "verify": client_options.get("verify"),
         }
 
     def get_client(self):
