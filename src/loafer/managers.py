@@ -3,12 +3,14 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING
 
 from .dispatchers import LoaferDispatcher
 from .runners import LoaferRunner
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from .routes import Route
 
 logger = logging.getLogger(__name__)
