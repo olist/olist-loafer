@@ -91,11 +91,12 @@ class LoaferDispatcher:
             routes = new_routes
             tasks = new_tasks
 
-    async def _consume_messages(self, processing_queue: asyncio.Queue) -> None:
+    async def _consume_messages(self, processing_queue: asyncio.Queue, tg: TaskGroup) -> None:
         while True:
             message, route = await processing_queue.get()
 
-            await self._process_message(message, route)
+            task = tg.create_task(self._process_message(message, route))
+            await task
             processing_queue.task_done()
 
     async def dispatch_providers(self, forever: bool = True) -> None:  # noqa: FBT001, FBT002
@@ -103,7 +104,7 @@ class LoaferDispatcher:
 
         async with TaskGroup() as tg:
             provider_task = tg.create_task(self._fetch_messages(processing_queue, tg, forever))
-            consumer_tasks = [tg.create_task(self._consume_messages(processing_queue)) for _ in range(self.workers)]
+            consumer_tasks = [tg.create_task(self._consume_messages(processing_queue, tg)) for _ in range(self.workers)]
 
             async def join():
                 await provider_task
