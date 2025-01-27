@@ -5,7 +5,7 @@ import logging
 import sys
 from typing import TYPE_CHECKING, Any
 
-from .compat import TaskGroup
+from ._compat import TaskGroup
 from .exceptions import DeleteMessage
 
 if TYPE_CHECKING:

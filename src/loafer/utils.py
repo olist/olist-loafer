@@ -1,6 +1,6 @@
 import logging
 
-from .compat import iscoroutinefunction, to_thread
+from ._compat import iscoroutinefunction, to_thread
 
 logger = logging.getLogger(__name__)
 

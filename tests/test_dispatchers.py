@@ -3,7 +3,7 @@ from unittest import mock
 
 import pytest
 
-from loafer.compat import PY311
+from loafer._compat import PY311
 from loafer.dispatchers import LoaferDispatcher
 from loafer.exceptions import DeleteMessage
 from loafer.routes import Route
