@@ -90,9 +90,9 @@ async def test_dispatch_message_task_cancel(route):
     dispatcher = LoaferDispatcher([route])
     message = "message"
 
-    confirmation = await dispatcher.dispatch_message(message, route)
+    with pytest.raises(asyncio.CancelledError):
+        await dispatcher.dispatch_message(message, route)
 
-    assert confirmation is False
     route.deliver.assert_awaited_once_with(message)
 
 
