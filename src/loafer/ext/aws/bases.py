@@ -5,7 +5,19 @@ from aiobotocore.session import get_session
 
 logger = logging.getLogger(__name__)
 
-session = get_session()
+DEFAULT_SESSION = None
+
+
+def _setup_default_session():
+    global DEFAULT_SESSION  # noqa: PLW0603
+    DEFAULT_SESSION = get_session()
+
+
+def get_default_session():
+    if not DEFAULT_SESSION:
+        _setup_default_session()
+
+    return DEFAULT_SESSION
 
 
 class _BotoClient:
@@ -31,7 +43,7 @@ class _BotoClient:
         if hasattr(self, "_client"):
             yield self._client
         else:
-            async with session.create_client(self.boto_service_name, **self._client_options) as client:
+            async with get_default_session().create_client(self.boto_service_name, **self._client_options) as client:
                 yield client
 
 
