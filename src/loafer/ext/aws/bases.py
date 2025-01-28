@@ -1,4 +1,5 @@
 import logging
+from contextlib import asynccontextmanager
 
 from aiobotocore.session import get_session
 
@@ -10,20 +11,28 @@ session = get_session()
 class _BotoClient:
     boto_service_name = None
 
-    def __init__(self, **client_options):
-        self._client_options = {
-            "api_version": client_options.get("api_version"),
-            "aws_access_key_id": client_options.get("aws_access_key_id"),
-            "aws_secret_access_key": client_options.get("aws_secret_access_key"),
-            "aws_session_token": client_options.get("aws_session_token"),
-            "endpoint_url": client_options.get("endpoint_url"),
-            "region_name": client_options.get("region_name"),
-            "use_ssl": client_options.get("use_ssl", True),
-            "verify": client_options.get("verify"),
-        }
+    def __init__(self, *, client=None, **client_options):
+        if client:
+            self._client = client
+        else:
+            self._client_options = {
+                "api_version": client_options.get("api_version"),
+                "aws_access_key_id": client_options.get("aws_access_key_id"),
+                "aws_secret_access_key": client_options.get("aws_secret_access_key"),
+                "aws_session_token": client_options.get("aws_session_token"),
+                "endpoint_url": client_options.get("endpoint_url"),
+                "region_name": client_options.get("region_name"),
+                "use_ssl": client_options.get("use_ssl", True),
+                "verify": client_options.get("verify"),
+            }
 
-    def get_client(self):
-        return session.create_client(self.boto_service_name, **self._client_options)
+    @asynccontextmanager
+    async def get_client(self):
+        if hasattr(self, "_client"):
+            yield self._client
+        else:
+            async with session.create_client(self.boto_service_name, **self._client_options) as client:
+                yield client
 
 
 class BaseSQSClient(_BotoClient):
