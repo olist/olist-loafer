@@ -44,10 +44,21 @@ async def test_get_queue_url_when_queue_name_is_url(mock_boto_session_sqs, boto_
 @pytest.mark.asyncio
 async def test_sqs_get_client(mock_boto_session_sqs, base_sqs_client, boto_client_sqs):
     with mock_boto_session_sqs as mock_session:
-        client_generator = base_sqs_client.get_client()
-        assert mock_session.called
-        async with client_generator as client:
+        async with base_sqs_client.get_client() as client:
             assert boto_client_sqs is client
+
+        assert mock_session.called
+
+
+@pytest.mark.asyncio
+async def test_sqs_get_client_with_custom_client(mock_boto_session_sqs, boto_client_sqs):
+    base_sqs_client = BaseSQSClient(client=boto_client_sqs)
+
+    with mock_boto_session_sqs as mock_session:
+        async with base_sqs_client.get_client() as client:
+            assert boto_client_sqs is client
+
+        mock_session.assert_not_called()
 
 
 @pytest.fixture
@@ -70,7 +81,17 @@ async def test_cache_get_topic_arn_with_arn(base_sns_client):
 @pytest.mark.asyncio
 async def test_sns_get_client(mock_boto_session_sns, base_sns_client, boto_client_sns):
     with mock_boto_session_sns as mock_session:
-        client_generator = base_sns_client.get_client()
-        assert mock_session.called
-        async with client_generator as client:
+        async with base_sns_client.get_client() as client:
             assert boto_client_sns is client
+        assert mock_session.called
+
+
+@pytest.mark.asyncio
+async def test_sns_get_client_with_custom_client(mock_boto_session_sns, boto_client_sns):
+    base_sns_client = BaseSNSClient(client=boto_client_sns)
+
+    with mock_boto_session_sns as mock_session:
+        async with base_sns_client.get_client() as client:
+            assert boto_client_sns is client
+
+    mock_session.assert_not_called()
