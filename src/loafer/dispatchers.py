@@ -62,34 +62,16 @@ class LoaferDispatcher:
     async def _fetch_messages(
         self,
         processing_queue: asyncio.Queue,
-        tg: TaskGroup,
+        route: Route,
         forever: bool = True,  # noqa: FBT001, FBT002
     ) -> None:
-        routes = list(self.routes)
-        tasks = [tg.create_task(route.provider.fetch_messages()) for route in routes]
+        while True:
+            messages = await route.provider.fetch_messages()
+            for message in messages:
+                await processing_queue.put((message, route))
 
-        while routes or tasks:
-            await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
-
-            new_routes = []
-            new_tasks = []
-            for task, route in zip(tasks, routes):
-                if task.done():
-                    if exc := task.exception():
-                        raise exc
-
-                    for message in task.result():
-                        await processing_queue.put((message, route))
-
-                    if forever:
-                        new_routes.append(route)
-                        new_tasks.append(tg.create_task(route.provider.fetch_messages()))
-                else:
-                    new_routes.append(route)
-                    new_tasks.append(task)
-
-            routes = new_routes
-            tasks = new_tasks
+            if not forever:
+                break
 
     async def _consume_messages(self, processing_queue: asyncio.Queue, tg: TaskGroup) -> None:
         while True:
@@ -103,17 +85,17 @@ class LoaferDispatcher:
         processing_queue = asyncio.Queue(self.queue_size)
 
         async with TaskGroup() as tg:
-            provider_task = tg.create_task(self._fetch_messages(processing_queue, tg, forever))
+            provider_tasks = [
+                tg.create_task(self._fetch_messages(processing_queue, route, forever)) for route in self.routes
+            ]
             consumer_tasks = [tg.create_task(self._consume_messages(processing_queue, tg)) for _ in range(self.workers)]
 
             async def join():
-                await provider_task
+                await asyncio.wait(provider_tasks)
                 await processing_queue.join()
 
                 for consumer_task in consumer_tasks:
                     consumer_task.cancel()
-
-                await asyncio.gather(*consumer_tasks, return_exceptions=True)
 
             tg.create_task(join())
 
