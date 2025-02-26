@@ -2,13 +2,5 @@ class ProviderError(Exception):
     pass
 
 
-class ProviderRuntimeError(ProviderError):
-    pass
-
-
-class LoaferError(Exception):
-    pass
-
-
-class DeleteMessage(LoaferError):  # noqa: N818
+class DeleteMessage(BaseException):  # technically not an Exception
     pass
