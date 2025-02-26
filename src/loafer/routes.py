@@ -27,17 +27,19 @@ class Route:
             msg = f"error_handler must be a callable object: {error_handler!r}"
             raise TypeError(msg)
 
-        self._error_handler = error_handler
+        if error_handler:
+            self._error_handler = ensure_coroutinefunction(error_handler)
+        else:
+            self._error_handler = None
 
         if callable(handler):
-            self.handler = handler
+            self.handler = ensure_coroutinefunction(handler)
             self._handler_instance = None
-        else:
-            self.handler = getattr(handler, "handle", None)
+        elif hasattr(handler, "handle"):
+            self.handler = ensure_coroutinefunction(handler.handle)
             self._handler_instance = handler
-
-        if not self.handler:
-            msg = f"handler must be a callable object or implement `handle` method: {self.handler!r}"
+        else:
+            msg = f"handler must be a callable object or implement `handle` method: {handler!r}"
             raise ValueError(msg)
 
     def __str__(self):
@@ -60,13 +62,13 @@ class Route:
     async def deliver(self, raw_message):
         message = self.apply_message_translator(raw_message)
         logger.info("delivering message route=%s, message=%r", self, message)
-        return await ensure_coroutinefunction(self.handler, message["content"], message["metadata"])
+        return await self.handler(message["content"], message["metadata"])
 
     async def error_handler(self, exc_info, message):
         logger.info("error handler process originated by message=%s", message)
 
         if self._error_handler is not None:
-            return await ensure_coroutinefunction(self._error_handler, exc_info, message)
+            return await self._error_handler(exc_info, message)
 
         return False
 

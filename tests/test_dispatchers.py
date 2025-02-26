@@ -3,13 +3,10 @@ from unittest import mock
 
 import pytest
 
-from loafer._compat import PY311
+from loafer._compat import ExceptionGroup
 from loafer.dispatchers import LoaferDispatcher
 from loafer.exceptions import DeleteMessage
 from loafer.routes import Route
-
-if not PY311:
-    from exceptiongroup import ExceptionGroup
 
 
 def create_mock_route(messages):
