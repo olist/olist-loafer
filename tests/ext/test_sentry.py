@@ -1,46 +1,74 @@
+from typing import TYPE_CHECKING
 from unittest import mock
 
-from loafer.ext.sentry import sentry_handler
+import pytest
+
+from loafer.types import SyncErrorHandler
+
+if TYPE_CHECKING:
+    import sentry_sdk
+
+    from loafer.ext.sentry import sentry_handler
+    from loafer.types import ExcInfo
+else:
+    sentry_sdk = pytest.importorskip("sentry_sdk")
+
+    from loafer.ext.sentry import sentry_handler
 
 
-class MockScope:
-    def __init__(self):
-        self.set_extra = mock.Mock()
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        return None
-
-
-def test_sentry_handler():
-    mock_scope = MockScope()
-    sdk_mocked = mock.Mock()
-    sdk_mocked.push_scope.return_value = mock_scope
-
-    handler = sentry_handler(sdk_mocked)
+def _run(handler: SyncErrorHandler) -> bool:
+    """Helper function to run the error_handler and run some checks."""
     exc = ValueError("test")
-    exc_info = (type(exc), exc, None)
-    delete_message = handler(exc_info, "test")
+    exc_info: ExcInfo = (type(exc), exc, None)
+
+    with mock.patch.object(sentry_sdk, "capture_exception") as mock_capture_exception:
+        delete_message: bool = handler(exc_info, "test")
+
+    scope: sentry_sdk.Scope = sentry_sdk.get_current_scope()
+    assert scope._extras["message"] == "test"  # noqa: SLF001
+    mock_capture_exception.assert_called_once_with(exc_info)
+
+    return delete_message
+
+
+def test_sentry_handler_default() -> None:
+    """Test if sentry_handler captures exception and deletes message."""
+    handler: SyncErrorHandler = sentry_handler()
+
+    delete_message: bool = _run(handler)
 
     assert delete_message is False
-    assert sdk_mocked.push_scope.called
-    mock_scope.set_extra.assert_called_once_with("message", "test")
-    sdk_mocked.capture_exception.assert_called_once_with(exc_info)
 
 
-def test_sentry_handler_delete_message():
-    mock_scope = MockScope()
-    sdk_mocked = mock.Mock()
-    sdk_mocked.push_scope.return_value = mock_scope
+@pytest.mark.parametrize("should_delete_message", [True, False])
+def test_sentry_handler_delete_message(should_delete_message: bool) -> None:  # noqa: FBT001
+    """Test if sentry_handler captures exception and respects message deletion choice."""
+    handler: SyncErrorHandler = sentry_handler(delete_message=should_delete_message)
 
-    handler = sentry_handler(sdk_mocked, delete_message=True)
-    exc = ValueError("test")
-    exc_info = (type(exc), exc, None)
-    delete_message = handler(exc_info, "test")
+    delete_message: bool = _run(handler)
 
-    assert delete_message is True
-    assert sdk_mocked.push_scope.called
-    mock_scope.set_extra.assert_called_once_with("message", "test")
-    sdk_mocked.capture_exception.assert_called_once_with(exc_info)
+    assert delete_message == should_delete_message
+
+
+def test_sentry_handler_with_custom_hub() -> None:
+    """Test if passing a custom hub is deprecated."""
+    with pytest.warns(DeprecationWarning, match="Hub"):
+        handler: SyncErrorHandler = sentry_handler(sentry_sdk)
+
+    delete_message: bool = _run(handler)
+
+    assert delete_message is False
+
+
+@pytest.mark.parametrize("should_delete_message", [True, False])
+def test_sentry_handler_with_positional_delete_message(should_delete_message: bool) -> None:  # noqa: FBT001
+    """Test if passing delete_message as positional arugment is deprecated."""
+    with (
+        pytest.warns(DeprecationWarning, match="delete_message"),
+        pytest.warns(DeprecationWarning, match="Hub"),
+    ):
+        handler: SyncErrorHandler = sentry_handler(sentry_sdk, should_delete_message)
+
+    delete_message: bool = _run(handler)
+
+    assert delete_message == should_delete_message

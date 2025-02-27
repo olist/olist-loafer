@@ -26,7 +26,11 @@ classifiers = [
 requires-python = ">=3.11"
 dependencies = [
   "aiobotocore>=2.0.0,<3.0.0",
+  "typing-extensions; python_version < '3.13'"
 ]
+
+[project.optional-dependencies]
+sentry = ["sentry-sdk>=2.0"]
 
 [project.urls]
 Download = "https://github.com/olist/olist-loafer/releases"
@@ -42,6 +46,7 @@ packages = ["src/loafer"]
 source = "vcs"
 
 [tool.hatch.envs.default]
+features = ["sentry"]
 dependencies = [
   "coverage[toml]>=6.5",
   "pytest",
