@@ -5,7 +5,6 @@ import logging
 import sys
 from typing import TYPE_CHECKING, Any
 
-from ._compat import TaskGroup
 from .exceptions import DeleteMessage
 
 if TYPE_CHECKING:
@@ -73,7 +72,7 @@ class LoaferDispatcher:
             if not forever:
                 break
 
-    async def _consume_messages(self, processing_queue: asyncio.Queue, tg: TaskGroup) -> None:
+    async def _consume_messages(self, processing_queue: asyncio.Queue, tg: asyncio.TaskGroup) -> None:
         while True:
             message, route = await processing_queue.get()
 
@@ -84,7 +83,7 @@ class LoaferDispatcher:
     async def dispatch_providers(self, forever: bool = True) -> None:  # noqa: FBT001, FBT002
         processing_queue = asyncio.Queue(self.queue_size)
 
-        async with TaskGroup() as tg:
+        async with asyncio.TaskGroup() as tg:
             provider_tasks = [
                 tg.create_task(self._fetch_messages(processing_queue, route, forever)) for route in self.routes
             ]

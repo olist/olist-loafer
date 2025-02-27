@@ -18,18 +18,14 @@ classifiers = [
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Topic :: System :: Distributed Computing",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 dependencies = [
   "aiobotocore>=2.0.0,<3.0.0",
-  "taskgroup; python_version < '3.11'",
-  "typing-extensions; python_version < '3.10'"
 ]
 
 [project.urls]
@@ -66,7 +62,7 @@ cov = [
 ]
 
 [[tool.hatch.envs.all.matrix]]
-python = ["3.9", "3.10", "3.11", "3.12", "3.13"]
+python = ["3.11", "3.12", "3.13"]
 
 [tool.hatch.envs.types]
 dependencies = [
