@@ -1,8 +1,8 @@
 import logging
 
+from ._compat import ensure_coroutinefunction
 from .message_translators import AbstractMessageTranslator
 from .providers import AbstractProvider
-from .utils import ensure_coroutinefunction
 
 logger = logging.getLogger(__name__)
 

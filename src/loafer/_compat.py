@@ -1,33 +1,21 @@
-import builtins
-import sys
+import asyncio
+import inspect
+import logging
+from collections.abc import Callable, Coroutine
+from functools import partial
+from typing import Any, ParamSpec, TypeVar
 
-if sys.version_info >= (3, 10):
-    from typing import ParamSpec
-else:
-    from typing_extensions import ParamSpec
-
-if sys.version_info >= (3, 11):
-    from asyncio import TaskGroup, to_thread
-
-    ExceptionGroup = builtins.ExceptionGroup
-else:
-    import asyncio
-    import contextvars
-    import functools
-
-    from exceptiongroup import ExceptionGroup
-    from taskgroup import TaskGroup
-
-    async def to_thread(func, /, *args, **kwargs):
-        loop = asyncio.get_running_loop()
-        ctx = contextvars.copy_context()
-        func_call = functools.partial(ctx.run, func, *args, **kwargs)
-        return await loop.run_in_executor(None, func_call)
+logger: logging.Logger = logging.getLogger(__name__)
 
 
-__all__ = [
-    "ExceptionGroup",
-    "ParamSpec",
-    "TaskGroup",
-    "to_thread",
-]
+_R = TypeVar("_R")
+_P = ParamSpec("_P")
+
+
+def ensure_coroutinefunction(func: Callable[_P, _R]) -> Callable[_P, Coroutine[Any, Any, _R]]:
+    if inspect.iscoroutinefunction(func):
+        logger.debug("handler is coroutine! %r", func)
+        return func
+
+    logger.debug("handler will run in a separate thread: %r", func)
+    return partial(asyncio.to_thread, func)
