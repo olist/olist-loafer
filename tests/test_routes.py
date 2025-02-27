@@ -84,7 +84,7 @@ async def test_error_handler(dummy_provider):
         return True
 
     # we cant mock regular functions in error handlers, because it will
-    # be checked with asyncio.iscoroutinefunction() and pass as coro
+    # be checked with inspect.iscoroutinefunction() and pass as coro
     route = Route(dummy_provider, mock.Mock(), error_handler=error_handler)
     exc = TypeError()
     exc_info = (type(exc), exc, "traceback")
