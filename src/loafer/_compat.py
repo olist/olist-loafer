@@ -22,15 +22,8 @@ else:
         return await loop.run_in_executor(None, functools.partial(func, *args, **kwargs))
 
 
-if sys.version_info >= (3, 11):
-    from inspect import iscoroutinefunction
-else:
-    from asyncio import iscoroutinefunction
-
-
 __all__ = [
     "ExceptionGroup",
-    "iscoroutinefunction",
     "ParamSpec",
     "TaskGroup",
     "to_thread",
