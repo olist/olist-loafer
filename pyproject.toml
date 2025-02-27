@@ -73,7 +73,7 @@ check = "mypy --install-types --non-interactive {args:src/loafer tests}"
 
 [tool.hatch.envs.hatch-static-analysis]
 config-path = "ruff_defaults.toml"
-dependencies = ["ruff==0.9.7"]
+dependencies = ["ruff==0.9.8"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
