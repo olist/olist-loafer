@@ -1,4 +1,5 @@
 import warnings
+from types import EllipsisType
 from typing import overload
 
 import sentry_sdk
@@ -13,34 +14,36 @@ def sentry_handler(*, delete_message: bool = False) -> ErrorHandler: ...
 
 @overload
 @deprecated("delete_message as a positional argument is deprecated.")
-def sentry_handler(sdk_or_hub: sentry_sdk.Hub, delete_message: bool, /) -> ErrorHandler: ...  # noqa: FBT001
+def sentry_handler(sdk_or_hub: sentry_sdk.Hub, should_delete: bool = False, /) -> ErrorHandler: ...  # noqa: FBT001, FBT002
 
 
-@overload
-@deprecated("Passing a custom sentry_sdk or Hub is deprecated.")
-def sentry_handler(sdk_or_hub: sentry_sdk.Hub, /) -> ErrorHandler: ...
-
-
-@overload
-@deprecated("Passing a custom sentry_sdk or Hub is deprecated.")
-def sentry_handler(sdk_or_hub: sentry_sdk.Hub, *, delete_message: bool = False) -> ErrorHandler: ...
-
-
-def sentry_handler(*args, delete_message=False) -> ErrorHandler:
-    if len(args) == 2:  # noqa: PLR2004
-        warnings.warn(
-            "delete_message as a positional argument is deprecated.",
-            category=DeprecationWarning,
-            stacklevel=3,
-        )
-        *args, delete_message = args
-
-    if len(args) == 1:
+def sentry_handler(
+    sdk_or_hub: sentry_sdk.Hub | None = None,
+    should_delete: bool | EllipsisType = ...,
+    /,
+    *,
+    delete_message: bool | EllipsisType = ...,
+) -> ErrorHandler:
+    if sdk_or_hub:
         warnings.warn(
             "Passing a custom sentry_sdk or Hub is deprecated.",
             category=DeprecationWarning,
             stacklevel=3,
         )
+
+    if delete_message is Ellipsis:
+        delete_message = False
+    elif should_delete is not Ellipsis:
+        msg: str = "delete_message passed as both positional and keyword argument."
+        raise ValueError(msg)
+
+    if should_delete is not Ellipsis:
+        warnings.warn(
+            message="delete_message as a positional argument is deprecated.",
+            category=DeprecationWarning,
+            stacklevel=3,
+        )
+        delete_message = should_delete
 
     def send_to_sentry(exc_info: ExcInfo, message: Message) -> bool:
         scope: sentry_sdk.Scope = sentry_sdk.get_current_scope()

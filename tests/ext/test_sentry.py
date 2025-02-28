@@ -72,3 +72,12 @@ def test_sentry_handler_with_positional_delete_message(should_delete_message: bo
     delete_message: bool = _run(handler)
 
     assert delete_message == should_delete_message
+
+
+def test_sentry_handler_with_positional_kw_delete_message() -> None:
+    """Test if passing delete_message as positional arugment is deprecated."""
+    with (
+        pytest.warns(DeprecationWarning, match="Hub"),
+        pytest.raises(ValueError, match="delete_message"),
+    ):
+        sentry_handler(sentry_sdk, True, delete_message=False)

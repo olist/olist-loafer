@@ -49,9 +49,10 @@ source = "vcs"
 features = ["sentry"]
 dependencies = [
   "coverage[toml]>=6.5",
-  "pytest",
+  "mypy",
   "pytest-asyncio",
   "pytest-deadfixtures",
+  "pytest",
 ]
 
 [tool.hatch.envs.default.scripts]
@@ -61,6 +62,7 @@ cov-report = [
   "- coverage combine",
   "coverage report",
 ]
+types = "mypy --install-types --non-interactive {args:src/loafer tests}"
 cov = [
   "test-cov",
   "cov-report",
@@ -69,13 +71,6 @@ cov = [
 [[tool.hatch.envs.all.matrix]]
 python = ["3.11", "3.12", "3.13"]
 
-[tool.hatch.envs.types]
-dependencies = [
-  "mypy>=1.0.0",
-]
-[tool.hatch.envs.types.scripts]
-check = "mypy --install-types --non-interactive {args:src/loafer tests}"
-
 [tool.hatch.envs.hatch-static-analysis]
 config-path = "ruff_defaults.toml"
 dependencies = ["ruff==0.9.8"]
@@ -83,6 +78,38 @@ dependencies = ["ruff==0.9.8"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "strict"
+
+[tool.mypy]
+strict = true
+
+[[tool.mypy.overrides]]
+module = "loafer.providers"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "loafer.runners"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "loafer.message_translators"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "loafer.routes"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "loafer.dispatchers"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "loafer.managers"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "loafer.ext.aws.*"
+ignore_errors = true
+
 
 [tool.ruff]
 extend = "ruff_defaults.toml"
