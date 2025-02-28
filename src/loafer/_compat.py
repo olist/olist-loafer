@@ -1,6 +1,7 @@
 import asyncio
 import inspect
 import logging
+import sys
 from collections.abc import Callable, Coroutine
 from functools import partial
 from typing import Any, ParamSpec, TypeVar
@@ -19,3 +20,14 @@ def ensure_coroutinefunction(func: Callable[_P, _R]) -> Callable[_P, Coroutine[A
 
     logger.debug("handler will run in a separate thread: %r", func)
     return partial(asyncio.to_thread, func)
+
+
+if sys.version_info >= (3, 13):
+    from warnings import deprecated
+else:
+    from typing_extensions import deprecated
+
+__all__ = [
+    "deprecated",
+    "ensure_coroutinefunction",
+]
