@@ -73,7 +73,7 @@ python = ["3.11", "3.12", "3.13"]
 
 [tool.hatch.envs.hatch-static-analysis]
 config-path = "ruff_defaults.toml"
-dependencies = ["ruff==0.9.8"]
+dependencies = ["ruff==0.9.9"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
