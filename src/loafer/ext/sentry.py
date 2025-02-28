@@ -45,7 +45,7 @@ def sentry_handler(
         )
         delete_message = should_delete
 
-    def send_to_sentry(exc_info: ExcInfo, message: Message) -> bool:
+    async def send_to_sentry(exc_info: ExcInfo, message: Message) -> bool:
         scope: sentry_sdk.Scope = sentry_sdk.get_current_scope()
         scope.set_extra("message", message)
         sentry_sdk.capture_exception(exc_info)
