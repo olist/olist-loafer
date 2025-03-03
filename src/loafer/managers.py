@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from .dispatchers import LoaferDispatcher
 from .runners import LoaferRunner
@@ -31,7 +31,7 @@ class LoaferManager:
 
         self.dispatcher = LoaferDispatcher(routes, queue_size, workers)
 
-    def run(self, forever=True, debug=False):  # noqa: FBT002
+    def run(self, *, forever: bool = True, debug: bool = False) -> None:
         loop = self.runner.loop
         self._future = asyncio.ensure_future(
             self.dispatcher.dispatch_providers(forever=forever),
@@ -50,11 +50,11 @@ class LoaferManager:
     # Callbacks
     #
 
-    def on_future__errors(self, future):
+    def on_future__errors(self, future: asyncio.Future[Any]) -> None:
         if future.cancelled():
             return self.runner.prepare_stop()
 
-        exc = future.exception()
+        exc: BaseException | None = future.exception()
         # Unhandled errors crashes the event loop execution
         if isinstance(exc, BaseException):
             logger.critical("fatal error caught: %r", exc)
@@ -62,7 +62,7 @@ class LoaferManager:
             return None
         return None
 
-    def on_loop__stop(self):
+    def on_loop__stop(self) -> None:
         logger.info("cancel dispatcher operations ...")
 
         if hasattr(self, "_future"):

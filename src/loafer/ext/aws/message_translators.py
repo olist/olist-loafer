@@ -1,14 +1,17 @@
 import json
 import logging
 
+from loafer._compat import override
 from loafer.message_translators import AbstractMessageTranslator
+from loafer.types import Message, TranslatedMessage
 
 logger = logging.getLogger(__name__)
 
 
 class SQSMessageTranslator(AbstractMessageTranslator):
-    def translate(self, message):
-        translated = {"content": None, "metadata": {}}
+    @override
+    def translate(self, message: Message) -> TranslatedMessage:
+        translated: TranslatedMessage = {"content": None, "metadata": {}}
         try:
             body = message["Body"]
         except (KeyError, TypeError):
@@ -27,8 +30,9 @@ class SQSMessageTranslator(AbstractMessageTranslator):
 
 
 class SNSMessageTranslator(AbstractMessageTranslator):
-    def translate(self, message):
-        translated = {"content": None, "metadata": {}}
+    @override
+    def translate(self, message: Message) -> TranslatedMessage:
+        translated: TranslatedMessage = {"content": None, "metadata": {}}
         try:
             body = json.loads(message["Body"])
             message_body = body.pop("Message")
