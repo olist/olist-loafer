@@ -60,7 +60,7 @@ dependencies = [
 test = "pytest {args:tests}"
 test-cov = "coverage run -m pytest {args:tests}"
 cov-report = ["- coverage combine", "coverage report"]
-types = "mypy --install-types --non-interactive {args:src/loafer tests}"
+types = "mypy --install-types --non-interactive {args:src/loafer}"
 cov = ["test-cov", "cov-report"]
 
 [[tool.hatch.envs.all.matrix]]
