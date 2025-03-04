@@ -123,13 +123,13 @@ async def test_handler_class_based_invalid(dummy_provider):
         pass
 
     handler = Handler()
-    with pytest.raises(ValueError, match="handler must be a callable object"):
+    with pytest.raises(TypeError, match="handler must be a callable object"):
         Route(dummy_provider, handler=handler)
 
 
 @pytest.mark.asyncio
 async def test_handler_invalid(dummy_provider):
-    with pytest.raises(ValueError, match="handler must be a callable object"):
+    with pytest.raises(TypeError, match="handler must be a callable object"):
         Route(dummy_provider, "invalid-handler")
 
 
