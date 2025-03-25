@@ -1,21 +1,23 @@
 import asyncio
 import logging
 import signal
+from collections.abc import Callable
 from concurrent.futures import CancelledError
 from contextlib import suppress
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
 class LoaferRunner:
-    def __init__(self, on_stop_callback=None):
-        self._on_stop_callback = on_stop_callback
+    def __init__(self, on_stop_callback: Callable[[], Any] | None = None) -> None:
+        self._on_stop_callback: Callable[[], Any] | None = on_stop_callback
 
     @property
-    def loop(self):
+    def loop(self) -> asyncio.AbstractEventLoop:
         return asyncio.get_event_loop()
 
-    def start(self, debug=False):  # noqa: FBT002
+    def start(self, *, debug: bool = False) -> None:
         if debug:
             self.loop.set_debug(enabled=debug)
 
@@ -30,12 +32,12 @@ class LoaferRunner:
             logger.debug("loop.is_running=%s", self.loop.is_running())
             logger.debug("loop.is_closed=%s", self.loop.is_closed())
 
-    def prepare_stop(self, *args):  # noqa: ARG002
+    def prepare_stop(self, *args: Any) -> None:  # noqa: ARG002
         if self.loop.is_running():
             # signals loop.run_forever to exit in the next iteration
             self.loop.stop()
 
-    def _cancel_all_tasks(self):
+    def _cancel_all_tasks(self) -> None:
         to_cancel = asyncio.all_tasks(self.loop)
         if not to_cancel:
             return
@@ -55,7 +57,7 @@ class LoaferRunner:
                     }
                 )
 
-    def stop(self):
+    def stop(self) -> None:
         logger.info("stopping Loafer ...")
         if callable(self._on_stop_callback):
             self._on_stop_callback()
