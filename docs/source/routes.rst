@@ -12,15 +12,15 @@ A ``Route`` aggregate all the main entities previously described, the generic pa
 
 We provide some helper routes, so you don't need to setup all this boilerplate code:
 
-    * ``loafer.ext.aws.routes.SQSRoute``: a route that configures a
-      ``loafer.ext.aws.providers.SQSProvider`` and
-      ``loafer.ext.aws.message_translators.SQSMessageTranslator``.
+    * ``loafer.contrib.aws.routes.SQSRoute``: a route that configures a
+      ``loafer.contrib.aws.providers.SQSProvider`` and
+      ``loafer.contrib.aws.message_translators.SQSMessageTranslator``.
 
       A route for handlers that consume messages from SQS queue (expects json format messages).
 
-    * ``loafer.ext.aws.routes.SNSQueueRoute``: a route that configures a
-      ``loafer.ext.aws.providers.SQSProvider`` and
-      ``loafer.ext.aws.message_translators.SNSMessageTranslator``.
+    * ``loafer.contrib.aws.routes.SNSQueueRoute``: a route that configures a
+      ``loafer.contrib.aws.providers.SQSProvider`` and
+      ``loafer.contrib.aws.message_translators.SNSMessageTranslator``.
 
       A route for handlers that consume messages from a SQS queue subscribed to
       a SNS topic (expects json format messages).
@@ -31,7 +31,7 @@ Examples
 
 Some examples of route creation::
 
-    from loafer.ext.aws.routes import SQSRoute, SNSQueueRoute
+    from loafer.contrib.aws.routes import SQSRoute, SNSQueueRoute
     from loafer.message_translators import StringMessageTranslator
 
 
