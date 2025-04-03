@@ -29,12 +29,12 @@ FAQ
 
 **3. Using different regions/credentials with SQSRoute/SNSRoute ?**
 
-    ``SQSRoute``/``SNSRoute`` instantiates ``loafer.ext.aws.providers.SQSProvider``,
+    ``SQSRoute``/``SNSRoute`` instantiates ``loafer.contrib.aws.providers.SQSProvider``,
     therefore you can dinamically set these options to any of :doc:`providers` available.
 
     An example with explicity AWS credentials and provider options would look like::
 
-        from loafer.ext.aws.routes import SQSRoute
+        from loafer.contrib.aws.routes import SQSRoute
 
         route = SQSRoute(
             'test-queue-name', name='my-route', handler=some_handler,

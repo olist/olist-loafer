@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from loafer.ext.aws.bases import BaseSNSClient, BaseSQSClient
+from loafer.contrib.aws.bases import BaseSNSClient, BaseSQSClient
 
 
 @pytest.fixture

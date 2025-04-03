@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from loafer.ext.aws.message_translators import SNSMessageTranslator, SQSMessageTranslator
+from loafer.contrib.aws.message_translators import SNSMessageTranslator, SQSMessageTranslator
 
 # sqs
 

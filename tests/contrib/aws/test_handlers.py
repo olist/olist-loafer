@@ -3,7 +3,7 @@ from unittest import mock
 
 import pytest
 
-from loafer.ext.aws.handlers import SNSHandler, SQSHandler
+from loafer.contrib.aws.handlers import SNSHandler, SQSHandler
 
 # SQSHandler
 
