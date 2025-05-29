@@ -4,7 +4,7 @@ import sys
 from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING, Any, TypeAlias
 
-from .exceptions import DeleteMessage
+from .exceptions import DeleteMessage, TerminateTaskGroup
 from .routes import Route
 from .types import ExcInfo, Message
 
@@ -85,22 +85,25 @@ class LoaferDispatcher:
     async def dispatch_providers(self, *, forever: bool = True) -> None:
         processing_queue: ProcessingQueue = ProcessingQueue(self.queue_size)
 
-        async with asyncio.TaskGroup() as tg:
-            provider_tasks: list[asyncio.Task[None]] = [
-                tg.create_task(self._fetch_messages(processing_queue, route, forever=forever)) for route in self.routes
-            ]
-            consumer_tasks: list[asyncio.Task[None]] = [
-                tg.create_task(self._consume_messages(processing_queue, tg)) for _ in range(self.workers)
-            ]
+        try:
+            async with asyncio.TaskGroup() as tg:
+                provider_tasks: list[asyncio.Task[None]] = [
+                    tg.create_task(self._fetch_messages(processing_queue, route, forever=forever))
+                    for route in self.routes
+                ]
 
-            async def join() -> None:
-                await asyncio.wait(provider_tasks)
-                await processing_queue.join()
+                for _ in range(self.workers):
+                    tg.create_task(self._consume_messages(processing_queue, tg))
 
-                for consumer_task in consumer_tasks:
-                    consumer_task.cancel()
+                async def join() -> None:
+                    await asyncio.wait(provider_tasks)
+                    await processing_queue.join()
 
-            tg.create_task(join())
+                    raise TerminateTaskGroup  # noqa: TRY301
+
+                tg.create_task(join())
+        except* TerminateTaskGroup:
+            pass
 
     def stop(self) -> None:
         for route in self.routes:
