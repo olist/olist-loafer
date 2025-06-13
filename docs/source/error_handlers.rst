@@ -30,7 +30,7 @@ To integrate with `sentry`_ you will need the `sdk`_ client and your account DSN
 Then you can automatically create an ``error_handler`` with the following code::
 
     import sentry_sdk
-    from loafer.ext.sentry import sentry_handler
+    from loafer.contrib.sentry import sentry_handler
 
     sentry_sdk.init(...)
     error_handler = sentry_handler(sentry_sdk, delete_message=True)

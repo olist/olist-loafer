@@ -65,7 +65,7 @@ def boto_client_sqs(queue_url, sqs_message):
 def mock_boto_session_sqs(boto_client_sqs):
     mock_create_client = mock.Mock(return_value=ClientContextCreator(boto_client_sqs))
     return mock.patch(
-        "loafer.ext.aws.bases.get_default_session", return_value=mock.Mock(create_client=mock_create_client)
+        "loafer.contrib.aws.bases.get_default_session", return_value=mock.Mock(create_client=mock_create_client)
     )
 
 
@@ -81,5 +81,5 @@ def boto_client_sns(sns_publish):
 def mock_boto_session_sns(boto_client_sns):
     mock_create_client = mock.Mock(return_value=ClientContextCreator(boto_client_sns))
     return mock.patch(
-        "loafer.ext.aws.bases.get_default_session", return_value=mock.Mock(create_client=mock_create_client)
+        "loafer.contrib.aws.bases.get_default_session", return_value=mock.Mock(create_client=mock_create_client)
     )

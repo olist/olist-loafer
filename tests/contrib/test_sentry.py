@@ -8,12 +8,12 @@ from loafer.types import AsyncErrorHandler
 if TYPE_CHECKING:
     import sentry_sdk
 
-    from loafer.ext.sentry import sentry_handler
+    from loafer.contrib.sentry import sentry_handler
     from loafer.types import ExcInfo
 else:
     sentry_sdk = pytest.importorskip("sentry_sdk")
 
-    from loafer.ext.sentry import sentry_handler
+    from loafer.contrib.sentry import sentry_handler
 
 pytestmark = pytest.mark.asyncio
 

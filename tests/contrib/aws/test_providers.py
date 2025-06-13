@@ -3,8 +3,8 @@ from unittest import mock
 import pytest
 from botocore.exceptions import BotoCoreError, ClientError
 
+from loafer.contrib.aws.providers import SQSProvider
 from loafer.exceptions import ProviderError
-from loafer.ext.aws.providers import SQSProvider
 
 
 @pytest.mark.asyncio
