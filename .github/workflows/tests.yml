@@ -40,7 +40,7 @@ jobs:
 
       - name: Run tests
         run: |
-          hatch env run -e all -i py=${{ matrix.python-version }} test
+          hatch test -i py=${{ matrix.python-version }}
 
       - name: Run type checks
         run: hatch env run types
