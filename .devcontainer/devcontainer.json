@@ -1,9 +1,9 @@
 {
 	"name": "loafer",
-	"image": "mcr.microsoft.com/devcontainers/python:0-3.12",
+	"image": "mcr.microsoft.com/devcontainers/python:0-3.13",
 	"features": {
-		"ghcr.io/devcontainers-contrib/features/hatch:2": {},
-		"ghcr.io/devcontainers-contrib/features/pre-commit:2": {}
+		"ghcr.io/devcontainers-extra/features/hatch:2": {},
+		"ghcr.io/devcontainers-extra/features/pre-commit:2": {}
 	},
 	"customizations": {
 		"vscode": {
