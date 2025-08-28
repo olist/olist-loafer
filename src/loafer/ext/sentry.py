@@ -19,7 +19,7 @@ def sentry_handler(sdk_or_hub: sentry_sdk.Hub, should_delete: bool = False, /) -
 
 def sentry_handler(
     sdk_or_hub: sentry_sdk.Hub | None = None,
-    should_delete: bool | EllipsisType = ...,
+    should_delete: bool | EllipsisType = ...,  # noqa: FBT001
     /,
     *,
     delete_message: bool | EllipsisType = ...,
