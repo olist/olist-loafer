@@ -8,31 +8,14 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"EditorConfig.EditorConfig",
+				"charliermarsh.ruff",
+				"editorconfig.editorconfig",
 				"github.vscode-github-actions",
-				"ms-python.black-formatter",
-				"ms-python.flake8",
-				"ms-python.isort",
+				"ms-python.mypy-type-checker",
 				"ms-python.python",
-				"tamasfe.even-better-toml"
-			],
-			"settings": {
-				"[python]": {
-					"editor.defaultFormatter": "ms-python.black-formatter",
-					"editor.formatOnSave": true,
-					"editor.codeActionsOnSave": {
-						"source.organizeImports": true
-					}
-				},
-				"isort.args": [
-					"--profile",
-					"black"
-				],
-				"python.testing.pytestEnabled": true,
-				"python.testing.pytestArgs": [
-					"--no-cov"
-				]
-			}
+				"redhat.vscode-yaml",
+				"tombi-toml.tombi"
+			]
 		}
 	}
 }
