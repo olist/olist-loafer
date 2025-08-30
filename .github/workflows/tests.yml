@@ -7,7 +7,7 @@ on:
       - "examples/**"
   push:
     branches:
-      - master
+      - main
     paths-ignore:
       - "docs/**"
       - "examples/**"
