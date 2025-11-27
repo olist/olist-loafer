@@ -34,7 +34,8 @@ def test_custom_runner():
     assert isinstance(manager.runner, mock.Mock)
 
 
-def test_on_future_errors():
+@pytest.mark.asyncio
+async def test_on_future_errors():
     manager = LoaferManager(routes=[])
     manager.runner = mock.Mock()
     future = asyncio.Future()
@@ -45,7 +46,8 @@ def test_on_future_errors():
     manager.runner.prepare_stop.assert_called_once_with()
 
 
-def test_on_future_errors_cancelled():
+@pytest.mark.asyncio
+async def test_on_future_errors_cancelled():
     manager = LoaferManager(routes=[])
     manager.runner = mock.Mock()
     future = asyncio.Future()
