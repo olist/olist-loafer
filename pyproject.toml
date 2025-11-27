@@ -74,7 +74,7 @@ python = ["3.11", "3.12", "3.13", "3.14"]
 
 [tool.hatch.envs.hatch-static-analysis]
 config-path = "ruff_defaults.toml"
-dependencies = ["ruff==0.12.10"]
+dependencies = ["ruff==0.14.6"]
 
 [tool.mypy]
 strict = true
