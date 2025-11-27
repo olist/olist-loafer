@@ -3,14 +3,14 @@ name = "olist-loafer"
 description = "Asynchronous message dispatcher for concurrent tasks processing"
 readme = "README.md"
 requires-python = ">=3.11"
-license = { file = "LICENSE" }
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [{ name = "Olist", email = "developers@olist.com" }]
 keywords = ["asyncio", "dispatcher", "message", "microservices", "tasks"]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Environment :: Console",
   "Intended Audience :: Developers",
-  "License :: OSI Approved :: MIT License",
   "Natural Language :: English",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3 :: Only",
@@ -35,7 +35,7 @@ Repository = "https://github.com/olist/olist-loafer/"
 sentry = ["sentry-sdk>=2.0"]
 
 [build-system]
-requires = ["hatch-vcs", "hatchling"]
+requires = ["hatchling>=1.27", "hatch-vcs>=0.5"]
 build-backend = "hatchling.build"
 
 [dependency-groups]
