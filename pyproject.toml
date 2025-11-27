@@ -38,6 +38,15 @@ sentry = ["sentry-sdk>=2.0"]
 requires = ["hatch-vcs", "hatchling"]
 build-backend = "hatchling.build"
 
+[dependency-groups]
+dev = [
+  "coverage[toml]>=6.5",
+  "mypy",
+  "pytest",
+  "pytest-asyncio",
+  "pytest-deadfixtures",
+]
+
 [tool.hatch.build.targets.sdist]
 exclude = ["/.devcontainer", "/.github", "/docs"]
 
@@ -49,13 +58,7 @@ source = "vcs"
 
 [tool.hatch.envs.default]
 features = ["sentry"]
-dependencies = [
-  "coverage[toml]>=6.5",
-  "mypy",
-  "pytest-asyncio",
-  "pytest-deadfixtures",
-  "pytest",
-]
+dependency-groups = ["dev"]
 
 [tool.hatch.envs.default.scripts]
 types = "mypy --install-types --non-interactive {args:src/loafer}"
