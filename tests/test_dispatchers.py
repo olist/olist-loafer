@@ -132,6 +132,21 @@ async def test_dispatch_providers_with_error(route):
     assert exc_info.value.subgroup(ValueError) is not None
 
 
+@pytest.mark.asyncio
+async def test_dispatch_providers_with_timeout():
+    route = create_mock_route(["message1", "message2", "message2"])
+    dispatcher = LoaferDispatcher([route], worker_timeout=2)
+
+    async def wait_forever(*_args, **_kwargs):
+        fut = asyncio.Future()
+        await fut
+
+    route.deliver = wait_forever
+
+    async with asyncio.timeout(5):
+        await dispatcher.dispatch_providers(forever=False)
+
+
 def test_dispatcher_stop(route):
     route.stop = mock.Mock()
     dispatcher = LoaferDispatcher([route])
