@@ -22,10 +22,12 @@ class LoaferDispatcher:
         routes: Sequence[Route],
         queue_size: int | None = None,
         workers: int | None = None,
+        worker_timeout: float | None = None,
     ) -> None:
         self.routes: Sequence[Route] = routes
         self.queue_size: int = queue_size if queue_size is not None else len(routes) * 10
         self.workers: int = workers if workers is not None else max(len(routes), 5)
+        self.worker_timeout: float | None = worker_timeout
 
     async def dispatch_message(self, message: Message, route: Route) -> bool:
         logger.debug("dispatching message to route=%s", route)
@@ -79,8 +81,14 @@ class LoaferDispatcher:
             message, route = await processing_queue.get()
 
             task = tg.create_task(self._process_message(message, route))
-            await task
-            processing_queue.task_done()
+            try:
+                async with asyncio.timeout(self.worker_timeout):
+                    await task
+            except TimeoutError:
+                logger.exception("message processing timed out, route=%s\n%r\n", route, message)
+                task.cancel()
+            finally:
+                processing_queue.task_done()
 
     async def dispatch_providers(self, *, forever: bool = True) -> None:
         processing_queue: ProcessingQueue = ProcessingQueue(self.queue_size)
