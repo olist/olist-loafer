@@ -21,9 +21,10 @@ classifiers = [
   "Topic :: System :: Distributed Computing",
 ]
 dependencies = [
-  "aiobotocore>=2.0.0,<3.0.0",
-  "types-aiobotocore[sqs,sns]>=2.0.0,<3.0.0",
-  "typing-extensions; python_version < '3.12'",
+  "asyncio-extensions (>=0.0.4)",
+  "aiobotocore (~=2.0)",
+  "types-aiobotocore[sqs,sns] (~=2.0)",
+  "typing-extensions (>=4.0); python_version < '3.12'",
 ]
 dynamic = ["version"]
 

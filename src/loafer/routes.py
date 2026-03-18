@@ -1,7 +1,8 @@
 import logging
 from typing import Any
 
-from ._compat import ensure_coroutinefunction
+from asyncio_extensions import asyncify
+
 from .message_translators import AbstractMessageTranslator
 from .providers import AbstractProvider
 from .types import (
@@ -46,17 +47,17 @@ class Route:
             raise TypeError(msg)
 
         if error_handler:
-            self._error_handler: AsyncErrorHandler | None = ensure_coroutinefunction(error_handler)
+            self._error_handler: AsyncErrorHandler | None = asyncify(error_handler)
         else:
             self._error_handler = None
 
         self.handler: AsyncHandlerFunc
         self._handler_instance: Handler | None
         if callable(handler):
-            self.handler = ensure_coroutinefunction(handler)
+            self.handler = asyncify(handler)
             self._handler_instance = None
         elif isinstance(handler, Handler):
-            self.handler = ensure_coroutinefunction(handler.handle)
+            self.handler = asyncify(handler.handle)
             self._handler_instance = handler
         else:
             msg = f"handler must be a callable object or implement `handle` method: {handler!r}"
