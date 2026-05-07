@@ -4,7 +4,9 @@ import sys
 from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING, Any, TypeAlias
 
-from .exceptions import DeleteMessage, TerminateTaskGroup
+from asyncio_extensions import STOP, iterate_queue
+
+from .exceptions import DeleteMessage
 from .routes import Route
 from .types import ExcInfo, Message
 
@@ -13,7 +15,7 @@ if TYPE_CHECKING:
 
 logger: logging.Logger = logging.getLogger(__name__)
 
-ProcessingQueue: TypeAlias = asyncio.Queue[tuple[Route, Message]]
+ProcessingQueue: TypeAlias = asyncio.Queue[tuple[Message, Route]]
 
 
 class LoaferDispatcher:
@@ -77,9 +79,7 @@ class LoaferDispatcher:
                 break
 
     async def _consume_messages(self, processing_queue: ProcessingQueue, tg: asyncio.TaskGroup) -> None:
-        while True:
-            message, route = await processing_queue.get()
-
+        async for message, route in iterate_queue(processing_queue):
             task = tg.create_task(self._process_message(message, route))
             try:
                 async with asyncio.timeout(self.worker_timeout):
@@ -87,31 +87,25 @@ class LoaferDispatcher:
             except TimeoutError:
                 logger.exception("message processing timed out, route=%s\n%r\n", route, message)
                 task.cancel()
-            finally:
-                processing_queue.task_done()
 
     async def dispatch_providers(self, *, forever: bool = True) -> None:
         processing_queue: ProcessingQueue = ProcessingQueue(self.queue_size)
 
-        try:
-            async with asyncio.TaskGroup() as tg:
-                provider_tasks: list[asyncio.Task[None]] = [
-                    tg.create_task(self._fetch_messages(processing_queue, route, forever=forever))
-                    for route in self.routes
-                ]
+        async with asyncio.TaskGroup() as tg:
+            provider_tasks: list[asyncio.Task[None]] = [
+                tg.create_task(self._fetch_messages(processing_queue, route, forever=forever)) for route in self.routes
+            ]
 
+            for _ in range(self.workers):
+                tg.create_task(self._consume_messages(processing_queue, tg))
+
+            await asyncio.wait(provider_tasks)
+
+            if sys.version_info >= (3, 13):
+                processing_queue.shutdown()
+            else:
                 for _ in range(self.workers):
-                    tg.create_task(self._consume_messages(processing_queue, tg))
-
-                async def join() -> None:
-                    await asyncio.wait(provider_tasks)
-                    await processing_queue.join()
-
-                    raise TerminateTaskGroup  # noqa: TRY301
-
-                tg.create_task(join())
-        except* TerminateTaskGroup:
-            pass
+                    await processing_queue.put(STOP)  # type: ignore[arg-type]
 
     def stop(self) -> None:
         for route in self.routes:
